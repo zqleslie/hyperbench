@@ -5,7 +5,7 @@ from .data_utils import (
     to_non_empty_edgeattr,
     to_0based_ids,
 )
-from .hif_utils import validate_hif_json
+from .hif_utils import validate_hif_json, decompress_zst, compress_to_zst
 from .nn_utils import (
     INPUT_LAYER,
     ActivationFn,
@@ -48,4 +48,6 @@ __all__ = [
     "to_non_empty_edgeattr",
     "to_0based_ids",
     "validate_hif_json",
+    "decompress_zst",
+    "compress_to_zst",
 ]

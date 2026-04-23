@@ -11,7 +11,7 @@ from urllib.parse import urlparse
 from torch import Tensor
 
 from hyperbench.types import HData, HIFHypergraph
-from hyperbench.utils import validate_hif_json
+from hyperbench.utils import validate_hif_json, decompress_zst, compress_to_zst
 
 
 def _validate_http_url(value: str) -> str:
@@ -51,10 +51,10 @@ class HIFLoader:
         if zst_filename.endswith(".zst"):
             if save_on_disk:
                 HIFLoader.__save_on_disk(os.path.basename(url), response.content)
-            output = HIFLoader.__decompress_zst(zst_filename)
+            output = decompress_zst(zst_filename)
         elif zst_filename.endswith(".json"):
             if save_on_disk:
-                compressed = HIFLoader.__compress_to_zst(zst_filename)
+                compressed = compress_to_zst(zst_filename)
                 HIFLoader.__save_on_disk(os.path.basename(url), compressed)
             output = zst_filename
         else:
@@ -80,7 +80,7 @@ class HIFLoader:
             raise ValueError(f"File '{filepath}' does not exist.")
 
         if filepath.endswith(".zst"):
-            output = HIFLoader.__decompress_zst(filepath)
+            output = decompress_zst(filepath)
         elif filepath.endswith(".json"):
             output = filepath
         else:
@@ -145,29 +145,10 @@ class HIFLoader:
                     tmp_zst_file.write(response.content)
                     zst_filename = tmp_zst_file.name
 
-        # Decompress the downloaded zst file
-        output = HIFLoader.__decompress_zst(zst_filename)
+        output = decompress_zst(zst_filename)
         hypergraph = HIFLoader.__extract_hif(output)
         hdata = HIFLoader.__process(hypergraph)
         return hdata
-
-    @staticmethod
-    def __decompress_zst(zst_path: str) -> str:
-        dctx = zstd.ZstdDecompressor()
-        with (
-            open(zst_path, "rb") as input_f,
-            tempfile.NamedTemporaryFile(mode="wb", suffix=".json", delete=False) as tmp_file,
-        ):
-            dctx.copy_stream(input_f, tmp_file)
-            output = tmp_file.name
-        return output
-
-    @staticmethod
-    def __compress_to_zst(json_path: str) -> bytes:
-        cctx = zstd.ZstdCompressor()
-        with open(json_path, "rb") as input_f:
-            compressed_content = cctx.compress(input_f.read())
-        return compressed_content
 
     @staticmethod
     def __extract_hif(json_file: str) -> HIFHypergraph:
