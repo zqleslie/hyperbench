@@ -1,9 +1,17 @@
+from typing import Optional
 import zstandard as zstd
 import tempfile
 import os
 
 
 def decompress_zst(zst_path: str) -> str:
+    """
+    Decompresses a .zst file and returns the path to the decompressed JSON file.
+    Args:
+        zst_path: The path to the .zst file to decompress.
+    Returns:
+        The path to the decompressed JSON file.
+    """
     dctx = zstd.ZstdDecompressor()
     with (
         open(zst_path, "rb") as input_f,
@@ -15,17 +23,36 @@ def decompress_zst(zst_path: str) -> str:
 
 
 def compress_to_zst(json_path: str) -> bytes:
+    """
+    Compresses a JSON file to .zst format and returns the compressed bytes.
+
+    Args:
+        json_path: The path to the JSON file to compress.
+    Returns:
+        The compressed content as bytes.
+    """
     cctx = zstd.ZstdCompressor()
     with open(json_path, "rb") as input_f:
         compressed_content = cctx.compress(input_f.read())
     return compressed_content
 
 
-def write_to_disk(dataset_name: str, content: bytes) -> None:
-    current_dir = os.path.dirname(os.path.abspath(__file__))
-    datasets_dir = os.path.join(current_dir, "..", "data", "datasets")
-    zst_filename = os.path.join(datasets_dir, f"{dataset_name}.json.zst")
-    os.makedirs(datasets_dir, exist_ok=True)
+def write_to_disk(dataset_name: str, content: bytes, output_dir: Optional[str] = None) -> None:
+    """
+    Writes the compressed content to disk in the specified output directory or a default location.
+    Args:
+        dataset_name: The name of the dataset.
+        content: The compressed content as bytes.
+        output_dir: The directory to write the file to. If None, a default location is used.
+    """
+    if output_dir is not None:
+        zst_filename = os.path.join(output_dir, f"{dataset_name}.json.zst")
+    else:
+        current_dir = os.path.dirname(os.path.abspath(__file__))
+        output_dir = os.path.join(current_dir, "..", "data", "datasets")
+        zst_filename = os.path.join(output_dir, f"{dataset_name}.json.zst")
+
+    os.makedirs(output_dir, exist_ok=True)
 
     with open(zst_filename, "wb") as f:
         f.write(content)

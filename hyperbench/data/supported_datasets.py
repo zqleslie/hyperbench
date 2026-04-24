@@ -114,34 +114,3 @@ class TwitterDataset(PreloadedDataset):
 
 class VegasBarsReviewsDataset(PreloadedDataset):
     DATASET_NAME = "vegas-bars-reviews"
-
-
-if __name__ == "__main__":
-    # test loading each dataset
-    for dataset_cls in [
-        AlgebraDataset,
-        AmazonDataset,
-        ContactHighSchoolDataset,
-        # ContactPrimarySchoolDataset,
-        # CoraDataset,
-        # CourseraDataset,
-        # DBLPDataset,
-        # EmailEnronDataset,
-        # EmailW3CDataset,
-        # GeometryDataset,
-        # GOTDataset,
-        # IMDBDataset,
-        # MusicBluesReviewsDataset,
-        # NBADataset,
-        # NDCClassesDataset,
-        # NDCSubstancesDataset,
-        # PatentDataset,
-        # PubmedDataset,
-        # RestaurantReviewsDataset,
-        # ThreadsAskUbuntuDataset,
-        # ThreadsMathsxDataset,
-        # TwitterDataset,
-        # VegasBarsReviewsDataset,
-    ]:
-        dataset = dataset_cls()
-        print(dataset.hdata.num_nodes, dataset.hdata.num_hyperedges)
