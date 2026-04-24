@@ -5,7 +5,7 @@ from .data_utils import (
     to_non_empty_edgeattr,
     to_0based_ids,
 )
-from .hif_utils import validate_hif_json
+from .hif_utils import validate_hif_json, get_datasets_shas, get_dataset_sha
 from .nn_utils import (
     INPUT_LAYER,
     ActivationFn,
@@ -54,4 +54,6 @@ __all__ = [
     "compress_to_zst",
     "validate_http_url",
     "write_to_disk",
+    "get_datasets_shas",
+    "get_dataset_sha",
 ]

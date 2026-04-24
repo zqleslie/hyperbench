@@ -111,7 +111,9 @@ def test_Preloaded_dataset_loads_hdata_when_hdata_is_none():
         dataset = AlgebraDataset(hdata=None)
 
     assert dataset.hdata == mock_hdata
-    mock_load.assert_called_once_with("algebra", save_on_disk=True)
+    mock_load.assert_called_once_with(
+        "algebra", hf_sha="2bb641461e00c103fb5ef4fe6a30aad42500fc21", save_on_disk=True
+    )
 
 
 @pytest.mark.parametrize(

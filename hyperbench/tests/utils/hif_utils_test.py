@@ -3,7 +3,13 @@ import json
 import os
 
 from unittest.mock import patch, mock_open, MagicMock
-from hyperbench.utils import validate_hif_json, compress_to_zst, decompress_zst
+from hyperbench.utils import (
+    validate_hif_json,
+    compress_to_zst,
+    decompress_zst,
+    get_datasets_shas,
+    get_dataset_sha,
+)
 from hyperbench.tests import MOCK_BASE_PATH
 
 
@@ -25,7 +31,7 @@ def test_validate_hif_json_with_url_success():
 
         validate_hif_json(path_valid)
         mock_get.assert_called_once_with(
-            "https://raw.githubusercontent.com/HIF-org/HIF-standard/main/schemas/hif_schema.json",
+            "https://raw.githubusercontent.com/HIF-org/HIF-standard/b691a3d2ec32100c0229ebe1151e9afad015c356/schemas/hif_schema.json",
             timeout=10,
         )
 
@@ -93,3 +99,60 @@ def test_decompress_zst_round_trip_preserves_json_content(tmp_path):
         decompressed_data = json.load(f)
 
     assert decompressed_data == expected_data
+
+
+def test_get_datasets_shas_returns_shas_and_none_on_failure():
+    names = ["algebra", "missing-dataset"]
+
+    def dataset_info_side_effect(*, repo_id):
+        if repo_id.endswith("/missing-dataset"):
+            raise RuntimeError("not found")
+        info = MagicMock()
+        info.sha = "sha-algebra"
+        return info
+
+    with (
+        patch("hyperbench.utils.hif_utils.HfApi") as mock_hf_api,
+        patch("builtins.print") as mock_print,
+    ):
+        mock_hf_api.return_value.dataset_info.side_effect = dataset_info_side_effect
+
+        result = get_datasets_shas(names)
+
+    assert result == {
+        "algebra": "sha-algebra",
+        "missing-dataset": None,
+    }
+    mock_hf_api.return_value.dataset_info.assert_any_call(repo_id="HypernetworkRG/algebra")
+    mock_hf_api.return_value.dataset_info.assert_any_call(repo_id="HypernetworkRG/missing-dataset")
+    assert any(
+        "missing-dataset: failed to retrieve SHA" in call.args[0]
+        for call in mock_print.call_args_list
+    )
+
+
+def test_get_dataset_sha_returns_sha():
+    with patch("hyperbench.utils.hif_utils.HfApi") as mock_hf_api:
+        info = MagicMock()
+        info.sha = "sha-amazon"
+        mock_hf_api.return_value.dataset_info.return_value = info
+
+        result = get_dataset_sha("amazon")
+
+    assert result == "sha-amazon"
+    mock_hf_api.return_value.dataset_info.assert_called_once_with(repo_id="HypernetworkRG/amazon")
+
+
+def test_get_dataset_sha_returns_none_on_failure():
+    with (
+        patch("hyperbench.utils.hif_utils.HfApi") as mock_hf_api,
+        patch("builtins.print") as mock_print,
+    ):
+        mock_hf_api.return_value.dataset_info.side_effect = RuntimeError("boom")
+
+        result = get_dataset_sha("amazon")
+
+    assert result is None
+    mock_hf_api.return_value.dataset_info.assert_called_once_with(repo_id="HypernetworkRG/amazon")
+    mock_print.assert_called_once()
+    assert "amazon: failed to retrieve SHA" in mock_print.call_args[0][0]

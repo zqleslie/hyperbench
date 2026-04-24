@@ -19,6 +19,8 @@ from hyperbench.utils import (
     write_to_disk,
 )
 
+GITHUB_COMMIT_SHA = "3879b2ce84750e54f984ca06ce3246dff22c71c7"
+
 
 class HIFProcessor:
     """A utility class to process HIF hypergraph data into :class:`HData` format."""
@@ -302,14 +304,15 @@ class HIFLoader:
         hdata = HIFProcessor.process_hypergraph(hypergraph)
         return hdata
 
-    def load_by_name(dataset_name: str, save_on_disk: bool = False) -> HData:
+    def load_by_name(
+        dataset_name: str, hf_sha: Optional[str] = None, save_on_disk: bool = False
+    ) -> HData:
         current_dir = os.path.dirname(os.path.abspath(__file__))
         zst_filename = os.path.join(current_dir, "datasets", f"{dataset_name}.json.zst")
 
         if not os.path.exists(zst_filename):
-            github_dataset_repo = f"https://github.com/hypernetwork-research-group/datasets/blob/main/{dataset_name}.json.zst?raw=true"
-
-            response = requests.get(github_dataset_repo)
+            github_url = f"https://raw.githubusercontent.com/hypernetwork-research-group/datasets/{GITHUB_COMMIT_SHA}/{dataset_name}.json.zst"
+            response = requests.get(github_url, timeout=20)
             if response.status_code != 200:
                 warnings.warn(
                     f"GitHub raw download failed for dataset '{dataset_name}' with status code {response.status_code}\n"
@@ -324,16 +327,23 @@ class HIFLoader:
                 with tempfile.NamedTemporaryFile(
                     mode="wb", suffix=".json.zst", delete=False
                 ) as tmp_hf_file:
-                    try:
-                        downloaded_path = hf_hub_download(
-                            repo_id=REPO_ID,
-                            filename=FILENAME,
-                            repo_type="dataset",
-                        )
-                    except Exception as e:
+                    if hf_sha is not None:
+                        try:
+                            downloaded_path = hf_hub_download(
+                                repo_id=REPO_ID,
+                                filename=FILENAME,
+                                repo_type="dataset",
+                                revision=hf_sha,
+                            )
+                        except Exception as e:
+                            raise ValueError(
+                                f"Failed to download dataset '{dataset_name}' from GitHub and Hugging Face Hub. GitHub error: {response.status_code} | Hugging Face error: {str(e)}"
+                            )
+                    else:
                         raise ValueError(
-                            f"Failed to download dataset '{dataset_name}' from GitHub and Hugging Face Hub. GitHub error: {response.status_code} | Hugging Face error: {str(e)}"
+                            f"Failed to download dataset '{dataset_name}' from GitHub with status code {response.status_code} and no SHA provided for Hugging Face Hub fallback."
                         )
+
                     with open(downloaded_path, "rb") as hf_file:
                         hf_content = hf_file.read()
                     tmp_hf_file.write(hf_content)
