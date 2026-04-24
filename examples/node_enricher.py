@@ -7,7 +7,7 @@ if __name__ == "__main__":
 
     print("Loading and preparing dataset...")
 
-    dataset = AlgebraDataset(sampling_strategy=sampling_strategy)
+    dataset = AlgebraDataset(sampling_strategy=SamplingStrategy.HYPEREDGE)
     # NodeEnricher adds features for each node.
     dataset.enrich_node_features(
         enricher=LaplacianPositionalEncodingEnricher(num_features=num_features),
