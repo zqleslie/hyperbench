@@ -6,8 +6,7 @@ import os
 
 from unittest.mock import patch, MagicMock
 
-from hyperbench.data.hif import HIFLoader, HIFProcessor
-import hyperbench.data.hif as hif_module
+from hyperbench.data import HIFLoader, HIFProcessor
 from hyperbench.types import HData, HIFHypergraph
 
 
@@ -290,13 +289,12 @@ def test_load_from_url_processes_zst_and_saves_to_disk(tmp_path, mock_hypergraph
     unique_name = f"algebra_{tmp_path.name}.json.zst"
     url = f"https://example.com/{unique_name}"
     json_path = _write_hif_json(tmp_path, mock_hypergraph)
-    current_dir = os.path.dirname(os.path.abspath(hif_module.__file__))
-    saved_path = os.path.join(current_dir, "datasets", f"{unique_name}.json.zst")
 
     with (
         patch("hyperbench.data.hif.requests.get") as mock_get,
         patch("hyperbench.data.hif.decompress_zst", return_value=json_path),
         patch("hyperbench.data.hif.validate_hif_json", return_value=True),
+        patch("hyperbench.data.hif.write_to_disk") as mock_write_to_disk,
     ):
         mock_response = mock_get.return_value
         mock_response.status_code = 200
@@ -304,13 +302,9 @@ def test_load_from_url_processes_zst_and_saves_to_disk(tmp_path, mock_hypergraph
 
         hdata = HIFLoader.load_from_url(url, save_on_disk=True)
 
-    try:
-        assert os.path.exists(saved_path)
-        assert hdata.num_nodes == 2
-        assert hdata.num_hyperedges == 1
-    finally:
-        if os.path.exists(saved_path):
-            os.remove(saved_path)
+    mock_write_to_disk.assert_called_once_with(unique_name, b"mock-zst-content")
+    assert hdata.num_nodes == 2
+    assert hdata.num_hyperedges == 1
 
 
 def test_load_from_url_processes_json_and_saves_compressed_copy(tmp_path, mock_hypergraph):
@@ -323,8 +317,6 @@ def test_load_from_url_processes_json_and_saves_compressed_copy(tmp_path, mock_h
         "edges": mock_hypergraph.hyperedges,
         "incidences": mock_hypergraph.incidences,
     }
-    current_dir = os.path.dirname(os.path.abspath(hif_module.__file__))
-    saved_path = os.path.join(current_dir, "datasets", f"{unique_name}.json.zst")
 
     with (
         patch("hyperbench.data.hif.requests.get") as mock_get,
@@ -334,6 +326,7 @@ def test_load_from_url_processes_json_and_saves_compressed_copy(tmp_path, mock_h
         ),
         patch("hyperbench.data.hif.compress_to_zst", return_value=b"compressed") as mock_compress,
         patch("hyperbench.data.hif.validate_hif_json", return_value=True),
+        patch("hyperbench.data.hif.write_to_disk") as mock_write_to_disk,
     ):
         mock_response = mock_get.return_value
         mock_response.status_code = 200
@@ -342,26 +335,21 @@ def test_load_from_url_processes_json_and_saves_compressed_copy(tmp_path, mock_h
         hdata = HIFLoader.load_from_url(url, save_on_disk=True)
 
     mock_compress.assert_called_once_with(str(tmp_path / "downloaded.json"))
-    try:
-        assert os.path.exists(saved_path)
-        assert hdata.num_nodes == 2
-        assert hdata.num_hyperedges == 1
-    finally:
-        if os.path.exists(saved_path):
-            os.remove(saved_path)
+    mock_write_to_disk.assert_called_once_with(unique_name, b"compressed")
+    assert hdata.num_nodes == 2
+    assert hdata.num_hyperedges == 1
 
 
 def test_load_from_url_processes_zst_without_saving_to_disk(tmp_path, mock_hypergraph):
     unique_name = f"algebra_{tmp_path.name}.json.zst"
     url = f"https://example.com/{unique_name}"
     json_path = _write_hif_json(tmp_path, mock_hypergraph)
-    current_dir = os.path.dirname(os.path.abspath(hif_module.__file__))
-    saved_path = os.path.join(current_dir, "datasets", f"{unique_name}.json.zst")
 
     with (
         patch("hyperbench.data.hif.requests.get") as mock_get,
         patch("hyperbench.data.hif.decompress_zst", return_value=json_path) as mock_decompress,
         patch("hyperbench.data.hif.validate_hif_json", return_value=True),
+        patch("hyperbench.data.hif.write_to_disk") as mock_write_to_disk,
     ):
         mock_response = mock_get.return_value
         mock_response.status_code = 200
@@ -369,7 +357,7 @@ def test_load_from_url_processes_zst_without_saving_to_disk(tmp_path, mock_hyper
 
         hdata = HIFLoader.load_from_url(url, save_on_disk=False)
 
-    assert not os.path.exists(saved_path)
+    mock_write_to_disk.assert_not_called()
     mock_decompress.assert_called_once()
     assert hdata.num_nodes == 2
     assert hdata.num_hyperedges == 1
@@ -385,8 +373,6 @@ def test_load_from_url_processes_json_without_saving_to_disk(tmp_path, mock_hype
         "edges": mock_hypergraph.hyperedges,
         "incidences": mock_hypergraph.incidences,
     }
-    current_dir = os.path.dirname(os.path.abspath(hif_module.__file__))
-    saved_path = os.path.join(current_dir, "datasets", f"{unique_name}.json.zst")
 
     with (
         patch("hyperbench.data.hif.requests.get") as mock_get,
@@ -396,6 +382,7 @@ def test_load_from_url_processes_json_without_saving_to_disk(tmp_path, mock_hype
         ),
         patch("hyperbench.data.hif.compress_to_zst") as mock_compress,
         patch("hyperbench.data.hif.validate_hif_json", return_value=True),
+        patch("hyperbench.data.hif.write_to_disk") as mock_write_to_disk,
     ):
         mock_response = mock_get.return_value
         mock_response.status_code = 200
@@ -404,7 +391,7 @@ def test_load_from_url_processes_json_without_saving_to_disk(tmp_path, mock_hype
         hdata = HIFLoader.load_from_url(url, save_on_disk=False)
 
     mock_compress.assert_not_called()
-    assert not os.path.exists(saved_path)
+    mock_write_to_disk.assert_not_called()
     assert hdata.num_nodes == 2
     assert hdata.num_hyperedges == 1
 

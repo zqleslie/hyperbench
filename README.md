@@ -8,6 +8,7 @@
 [![project_license][license-shield]][license-url]
 
 [![codecov](https://codecov.io/github/hypernetwork-research-group/hyperbench/graph/badge.svg?token=XE0TB5JMOS)](https://codecov.io/github/hypernetwork-research-group/hyperbench)
+[![CodeFactor](https://www.codefactor.io/repository/github/hypernetwork-research-group/hyperbench/badge)](https://www.codefactor.io/repository/github/hypernetwork-research-group/hyperbench)
 
 ## About the project
 
