@@ -103,7 +103,7 @@ def mock_hdata_random_ids() -> HData:
     return HData(x=x, hyperedge_index=hyperedge_index)
 
 
-def test_Preloaded_dataset_init():
+def test_preloaded_dataset_init():
     mock_hdata = MagicMock(spec=HData)
     dataset = PreloadedDataset(hdata=mock_hdata)
 
@@ -111,7 +111,7 @@ def test_Preloaded_dataset_init():
     assert dataset.sampling_strategy is SamplingStrategy.HYPEREDGE
 
 
-def test_Preloaded_dataset_loads_hdata_when_hdata_is_none():
+def test_preloaded_dataset_loads_hdata_when_hdata_is_none():
     mock_hdata = MagicMock(spec=HData)
     with patch.object(HIFLoader, "load_by_name", return_value=mock_hdata) as mock_load:
         dataset = AlgebraDataset(hdata=None)
@@ -670,44 +670,6 @@ def test_to_device(mock_hdata):
 
     assert result is dataset
     assert dataset.hdata.device == device
-
-
-# def test_load_skips_download_when_file_exists():
-#     dataset_name = "algebra"
-
-#     sample_hif = {
-#         "network-type": "undirected",
-#         "nodes": [{"node": "0"}, {"node": "1"}],
-#         "edges": [{"edge": "0"}],
-#         "incidences": [{"node": "0", "edge": "0"}],
-#     }
-
-#     mock_hypergraph = HIFHypergraph(
-#         network_type="undirected",
-#         nodes=[{"node": "0"}, {"node": "1"}],
-#         hyperedges=[{"edge": "0"}],
-#         incidences=[{"node": "0", "edge": "0"}],
-#     )
-
-#     with (
-#         patch("hyperbench.data.dataset.requests.get") as mock_get,
-#         patch("hyperbench.data.dataset.os.path.exists", return_value=True),
-#         patch("builtins.open", mock_open()) as mock_file,
-#         patch("hyperbench.data.dataset.zstd.ZstdDecompressor") as mock_decomp,
-#         patch("hyperbench.data.dataset.tempfile.NamedTemporaryFile") as mock_temp,
-#         patch("hyperbench.data.dataset.json.load", return_value=sample_hif),
-#         patch("hyperbench.data.dataset.validate_hif_json", return_value=True),
-#         patch.object(HIFHypergraph, "from_hif", return_value=mock_hypergraph),
-#     ):
-#         mock_dctx = mock_decomp.return_value
-#         mock_dctx.copy_stream = lambda input_f, tmp_file: None
-
-#         mock_temp_instance = mock_temp.return_value.__enter__.return_value
-#         mock_temp_instance.name = "/tmp/decompressed.json"
-
-#         result = HIFLoader.load_by_name(dataset_name, save_on_disk=True)
-#         mock_get.assert_not_called()
-#         assert result == mock_hypergraph
 
 
 def test_default_sampling_strategy_is_hyperedge(mock_hdata_four_node_hypergraph):

@@ -65,8 +65,6 @@ class HIFProcessor:
         Returns:
             The processed hypergraph data.
         """
-        # if not self.__is_prepared:
-        #     raise ValueError("process can only be called for the original dataset.")
 
         num_nodes = len(hypergraph.nodes)
         x = cls.__process_x(hypergraph, num_nodes)
@@ -171,7 +169,7 @@ class HIFProcessor:
             for hyperedge_idx in range(num_hyperedges):
                 hyperedge_id = hyperedge_idx_to_id[hyperedge_idx]
 
-                transformed_attrs = HIFProcessor.transform_attrs(
+                transformed_attrs = cls.transform_attrs(
                     # If it's a real hyperedge, get its attrs; if self-loop, get empty dict
                     attrs=hyperedge_id_to_attrs.get(hyperedge_id, {}),
                     attr_keys=hyperedge_attr_keys,
@@ -192,7 +190,7 @@ class HIFProcessor:
         if node_attr_keys:
             x = torch.stack(
                 [
-                    HIFProcessor.transform_attrs(node.get("attrs", {}), attr_keys=node_attr_keys)
+                    cls.transform_attrs(node.get("attrs", {}), attr_keys=node_attr_keys)
                     for node in hypergraph.nodes
                 ]
             )
@@ -238,7 +236,8 @@ class HIFProcessor:
 class HIFLoader:
     """A utility class to load hypergraphs from HIF format."""
 
-    def load_from_url(url: str, save_on_disk: bool = False) -> HData:
+    @classmethod
+    def load_from_url(cls, url: str, save_on_disk: bool = False) -> HData:
         """
         Load a hypergraph from a given URL pointing to a .json or .json.zst file in HIF format.
         Args:
@@ -275,11 +274,12 @@ class HIFLoader:
                 f"Unsupported file format for URL '{url}'. Expected .json or .json.zst"
             )
 
-        hypergraph = HIFLoader.__extract_hif(output)
+        hypergraph = cls.__extract_hif(output)
         hdata = HIFProcessor.process_hypergraph(hypergraph)
         return hdata
 
-    def load_from_path(filepath: str) -> HData:
+    @classmethod
+    def load_from_path(cls, filepath: str) -> HData:
         """
         Load a hypergraph from a local file path pointing to a .json or .json.zst file in HIF format.
         Args:
@@ -300,12 +300,13 @@ class HIFLoader:
                 f"Unsupported file format for filepath '{filepath}'. Expected .json or .json.zst"
             )
 
-        hypergraph = HIFLoader.__extract_hif(output)
+        hypergraph = cls.__extract_hif(output)
         hdata = HIFProcessor.process_hypergraph(hypergraph)
         return hdata
 
+    @classmethod
     def load_by_name(
-        dataset_name: str, hf_sha: Optional[str] = None, save_on_disk: bool = False
+        cls, dataset_name: str, hf_sha: Optional[str] = None, save_on_disk: bool = False
     ) -> HData:
         current_dir = os.path.dirname(os.path.abspath(__file__))
         zst_filename = os.path.join(current_dir, "datasets", f"{dataset_name}.json.zst")
@@ -363,12 +364,12 @@ class HIFLoader:
                     zst_filename = tmp_zst_file.name
 
         output = decompress_zst(zst_filename)
-        hypergraph = HIFLoader.__extract_hif(output)
+        hypergraph = cls.__extract_hif(output)
         hdata = HIFProcessor.process_hypergraph(hypergraph)
         return hdata
 
-    @staticmethod
-    def __extract_hif(json_file: str) -> HIFHypergraph:
+    @classmethod
+    def __extract_hif(cls, json_file: str) -> HIFHypergraph:
         with open(json_file, "r") as f:
             hiftext = json.load(f)
         if not validate_hif_json(json_file):

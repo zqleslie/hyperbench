@@ -9,7 +9,7 @@ import zstandard as zstd
 from typing import Any, Dict, List, Optional, Literal
 from torch import Tensor
 from torch.utils.data import Dataset as TorchDataset
-from hyperbench.nn.enricher import EnrichmentMode, NodeEnricher, HyperedgeEnricher
+from hyperbench.nn import EnrichmentMode, NodeEnricher, HyperedgeEnricher
 from hyperbench.types import HData, HIFHypergraph, HyperedgeIndex
 from hyperbench.utils import (
     NodeSpaceAssignment,
@@ -22,8 +22,7 @@ from hyperbench.utils import (
 
 from hyperbench.data.sampling import SamplingStrategy, create_sampler_from_strategy
 from hyperbench.data.hif import HIFLoader, HIFProcessor
-from hyperbench.nn import EnrichmentMode, NodeEnricher, HyperedgeEnricher
-from hyperbench.types import HData
+from hyperbench.nn.enricher import EnrichmentMode, NodeEnricher, HyperedgeEnricher
 
 
 class Dataset(TorchDataset):
@@ -37,46 +36,6 @@ class Dataset(TorchDataset):
         sampling_strategy: The strategy used for sampling sub-hypergraphs (e.g., by node IDs or hyperedge IDs).
             If not provided, defaults to ``SamplingStrategy.HYPEREDGE``.
     """
-
-    def __init__(
-        self,
-        hdata: Optional[HData] = None,
-        sampling_strategy: SamplingStrategy = SamplingStrategy.HYPEREDGE,
-    ) -> None:
-        """
-        Initialize the Dataset.
-
-        Args:
-            hdata: Optional HData object to initialize the dataset with.
-                If provided, the dataset will be initialized with this data instead of loading and processing from HIF. Must be provided if prepare is set to ``False``.
-            sampling_strategy: The sampling strategy to use for the dataset. If not provided, defaults to ``SamplingStrategy.HYPEREDGE``.
-        """
-
-        self.__sampler = create_sampler_from_strategy(sampling_strategy)
-        self.sampling_strategy = sampling_strategy
-        self.hdata = hdata if hdata is not None else HData.empty()
-
-    def __len__(self) -> int:
-        return self.__sampler.len(self.hdata)
-
-    def __getitem__(self, index: int | List[int]) -> HData:
-        """
-        Sample a sub-hypergraph based on the sampling strategy and return it as HData.
-        If:
-        - Sampling by node IDs, the sub-hypergraph will contain all hyperedges incident to the sampled nodes and all nodes incident to those hyperedges.
-        - Sampling by hyperedge IDs, the sub-hypergraph will contain all nodes incident to the sampled hyperedges.
-
-        Args:
-            index: An integer or a list of integers representing node or hyperedge IDs to sample, depending on the sampling strategy.
-
-        Returns:
-            An HData instance containing the sampled sub-hypergraph.
-
-        Raises:
-            ValueError: If the provided index is invalid (e.g., empty list or list length exceeds number of nodes/hyperedges).
-            IndexError: If any node/hyperedge ID is out of bounds.
-        """
-        return self.__sampler.sample(index, self.hdata)
 
     @classmethod
     def from_hdata(
@@ -241,6 +200,30 @@ class Dataset(TorchDataset):
         """
         self.hdata = self.hdata.remove_hyperedges_with_fewer_than_k_nodes(k)
 
+    def __get_hyperedge_ids_permutation(
+        self,
+        num_hyperedges: int,
+        shuffle: Optional[bool],
+        seed: Optional[int],
+    ) -> Tensor:
+        device = self.hdata.device
+
+        # Shuffle hyperedge IDs if shuffle is requested, otherwise keep original order for deterministic splits
+        if shuffle:
+            generator = torch.Generator(device=device)
+            if seed is not None:
+                generator.manual_seed(seed)
+
+            random_hyperedge_ids_permutation = torch.randperm(
+                n=num_hyperedges,
+                generator=generator,
+                device=device,
+            )
+            return random_hyperedge_ids_permutation
+
+        ranged_hyperedge_ids_permutation = torch.arange(num_hyperedges, device=device)
+        return ranged_hyperedge_ids_permutation
+
     def split(
         self,
         ratios: List[float],
@@ -372,30 +355,6 @@ class Dataset(TorchDataset):
         self.hdata = self.hdata.to(device)
         return self
 
-    def __get_hyperedge_ids_permutation(
-        self,
-        num_hyperedges: int,
-        shuffle: Optional[bool],
-        seed: Optional[int],
-    ) -> Tensor:
-        device = self.hdata.device
-
-        # Shuffle hyperedge IDs if shuffle is requested, otherwise keep original order for deterministic splits
-        if shuffle:
-            generator = torch.Generator(device=device)
-            if seed is not None:
-                generator.manual_seed(seed)
-
-            random_hyperedge_ids_permutation = torch.randperm(
-                n=num_hyperedges,
-                generator=generator,
-                device=device,
-            )
-            return random_hyperedge_ids_permutation
-
-        ranged_hyperedge_ids_permutation = torch.arange(num_hyperedges, device=device)
-        return ranged_hyperedge_ids_permutation
-
     def transform_node_attrs(
         attrs: Dict[str, Any],
         attr_keys: Optional[List[str]] = None,
@@ -435,3 +394,43 @@ class Dataset(TorchDataset):
         """
 
         return self.hdata.stats()
+
+    def __init__(
+        self,
+        hdata: Optional[HData] = None,
+        sampling_strategy: SamplingStrategy = SamplingStrategy.HYPEREDGE,
+    ) -> None:
+        """
+        Initialize the Dataset.
+
+        Args:
+            hdata: Optional HData object to initialize the dataset with.
+                If provided, the dataset will be initialized with this data instead of loading and processing from HIF. Must be provided if prepare is set to ``False``.
+            sampling_strategy: The sampling strategy to use for the dataset. If not provided, defaults to ``SamplingStrategy.HYPEREDGE``.
+        """
+
+        self.__sampler = create_sampler_from_strategy(sampling_strategy)
+        self.sampling_strategy = sampling_strategy
+        self.hdata = hdata if hdata is not None else HData.empty()
+
+    def __len__(self) -> int:
+        return self.__sampler.len(self.hdata)
+
+    def __getitem__(self, index: int | List[int]) -> HData:
+        """
+        Sample a sub-hypergraph based on the sampling strategy and return it as HData.
+        If:
+        - Sampling by node IDs, the sub-hypergraph will contain all hyperedges incident to the sampled nodes and all nodes incident to those hyperedges.
+        - Sampling by hyperedge IDs, the sub-hypergraph will contain all nodes incident to the sampled hyperedges.
+
+        Args:
+            index: An integer or a list of integers representing node or hyperedge IDs to sample, depending on the sampling strategy.
+
+        Returns:
+            An HData instance containing the sampled sub-hypergraph.
+
+        Raises:
+            ValueError: If the provided index is invalid (e.g., empty list or list length exceeds number of nodes/hyperedges).
+            IndexError: If any node/hyperedge ID is out of bounds.
+        """
+        return self.__sampler.sample(index, self.hdata)
