@@ -35,17 +35,17 @@ def validate_hif_json(filename: str) -> bool:
         return False
 
 
-def get_datasets_shas(
+def get_hf_datasets_shas(
     dataset_names: list[str], namespace: str = "HypernetworkRG"
 ) -> Dict[str, str | None]:
     shas: Dict[str, str | None] = {}
 
     for dataset_name in dataset_names:
-        shas[dataset_name] = get_dataset_sha(dataset_name, namespace)
+        shas[dataset_name] = get_hf_dataset_sha(dataset_name, namespace)
     return shas
 
 
-def get_dataset_sha(dataset_name: str, namespace: str = "HypernetworkRG") -> str | None:
+def get_hf_dataset_sha(dataset_name: str, namespace: str = "HypernetworkRG") -> str | None:
     api = HfApi()
     repo_id = f"{namespace}/{dataset_name}"
     try:
@@ -54,3 +54,45 @@ def get_dataset_sha(dataset_name: str, namespace: str = "HypernetworkRG") -> str
     except Exception as e:
         warnings.warn(f"{dataset_name}: failed to retrieve SHA ({e})")
         return None
+
+
+def get_gh_datasets_shas(
+    dataset_names: list[str],
+    owner: str = "hypernetwork-research-group",
+    repository: str = "datasets",
+) -> Dict[str, str | None]:
+    shas: Dict[str, str | None] = {}
+
+    for dataset_name in dataset_names:
+        shas[dataset_name] = get_gh_dataset_sha(dataset_name, owner, repository)
+    return shas
+
+
+def get_gh_dataset_sha(dataset_name: str, owner: str, repository: str) -> str | None:
+
+    OWNER = owner
+    REPO = repository
+    FILE_PATH = f"{dataset_name}.json.zst"
+
+    url = f"https://api.github.com/repos/{OWNER}/{REPO}/commits"
+
+    params = {
+        "path": FILE_PATH,
+        "per_page": 1,  # latest commit only
+    }
+
+    try:
+        response = requests.get(url, params=params)
+        response.raise_for_status()
+    except requests.RequestException as e:
+        warnings.warn(f"{dataset_name}: failed to retrieve SHA ({e})")
+        return None
+
+    data = response.json()
+
+    if data:
+        commit_sha = data[0]["sha"]
+    else:
+        warnings.warn(f"{dataset_name}: no commits found for {FILE_PATH}")
+        return None
+    return commit_sha
