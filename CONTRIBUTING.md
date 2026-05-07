@@ -2,30 +2,38 @@
 
 The project main language is English.
 
-## Pre-commit hooks
-
-Run the following command to install the pre-commit hook:
+## Quickstart for contributors
 
 ```bash
+git clone https://github.com/hypernetwork-research-group/hyperbench.git
+cd hyperbench
 make build
 
+# install pre-commit to setup automatic local check
+# This will ensure that your code adheres to the project's coding standards before each commit.
 pre-commit install \
     --config .github/hooks/.pre-commit-config.yaml \
     --install-hooks \
     --overwrite
-```
 
-This will ensure that your code adheres to the project's coding standards before each commit.
-
-## Build and test
-
-To build the project and run tests, use the following command:
-
-```bash
+# To build the project and run tests, use the following command:
 make
+
+
 ```
 
-## Commit message style
+## Contribution types + expectations
+
+### Bugfix
+
+### Feature
+
+### Docs
+Check [Docs Contribution](#docs-contribution) for more details
+
+## Workflow
+
+### Commit message style
 
 Commit messages should follow the [conventional commit specification](https://www.conventionalcommits.org/en/v1.0.0/).
 
@@ -42,7 +50,7 @@ Commit messages should be structured in a way that can be read as if they were c
 
 Reads as *"If applied, this commit will add new authentication method to API"*.
 
-## Branch naming
+### Branch naming
 
 Branch names should follow the pattern `^(feat|fix|chore|refactor|docs)\/[a-z0-9]+(-[a-z0-9]+)*$`. This means that branch names should:
 - Start with the same structural elements as commit messages.
@@ -61,3 +69,16 @@ To verify that your branch name adheres to these guidelines, you can use the fol
 ```bash
 git rev-parse --abbrev-ref HEAD | grep -Eq '^(feat|fix|chore|refactor|docs)\/[a-z0-9]+(-[a-z0-9]+)*$' && echo "Branch name is compliant" || echo "Invalid branch name"
 ```
+
+## Quality gates
+
+## AI-assited contributions policy
+
+## Docs Contribution
+
+
+<!--  -->
+<!--  -->
+<!--  -->
+<!--  -->
+<!--  -->

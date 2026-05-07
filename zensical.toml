@@ -61,7 +61,6 @@ nav = [
     { "Types" = "api/types.md" },
     { "Utils" = "api/utils.md" },
   ] },
-  { "Contributing" = "contributing.md" },
 ]
 
 # Additional CSS files, relative to docs/.
