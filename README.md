@@ -18,13 +18,6 @@ WIP
 
 See the [Documentation][docs] for more details.
 
-### Prerequisites
-
-- [uv](https://github.com/astral-sh/uv)
-- [make](https://www.gnu.org/software/make/)
-
-### Installation
-
 ### Run examples
 
 Run examples from the [examples](examples) directory to get started. For instance:
@@ -51,6 +44,15 @@ WIP
 Most development discussions take place on GitHub in this repo, via the [GitHub issue tracker][issues].
 
 ![Alt](https://repobeats.axiom.co/api/embed/c168082ecb1f9f843c1b170dcfee93542b576f61.svg "Repobeats analytics image")
+## Star History
+
+<a href="https://www.star-history.com/?repos=hypernetwork-research-group%2Fhyperbench&type=date&logscale=&legend=top-left">
+ <picture>
+   <source media="(prefers-color-scheme: dark)" srcset="https://api.star-history.com/chart?repos=hypernetwork-research-group/hyperbench&type=date&theme=dark&logscale&legend=top-left" />
+   <source media="(prefers-color-scheme: light)" srcset="https://api.star-history.com/chart?repos=hypernetwork-research-group/hyperbench&type=date&logscale&legend=top-left" />
+   <img alt="Star History Chart" src="https://api.star-history.com/chart?repos=hypernetwork-research-group/hyperbench&type=date&logscale&legend=top-left" />
+ </picture>
+</a>
 
 <!-- LINKS -->
 [contributors-shield]: https://img.shields.io/github/contributors/hypernetwork-research-group/hyperbench.svg?style=for-the-badge
