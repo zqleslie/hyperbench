@@ -1,43 +1,12 @@
-# ============================================================================
-#
-# The configuration produced by default is meant to highlight the features
-# that Zensical provides and to serve as a starting point for your own
-# projects.
-#
-# ============================================================================
-
 [project]
-
 docs_dir = "docs"
 site_dir = "docs/site"
-# The site_name is shown in the page header and the browser window title
-#
-# Read more: https://zensical.org/docs/setup/basics/#site_name
 site_name = "©Hyperbench Documentation"
-
-# The site_description is included in the HTML head and should contain a
-# meaningful description of the site content for use by search engines.
-#
-# Read more: https://zensical.org/docs/setup/basics/#site_description
 site_description = "Documentation for Hyperbench"
-
-# The site_author attribute. This is used in the HTML head element.
-#
-# Read more: https://zensical.org/docs/setup/basics/#site_author
 site_author = "Hypernetwork Research Group"
-
-# The site_url is the canonical URL for your site. When building online
-# documentation you should set this.
-# Read more: https://zensical.org/docs/setup/basics/#site_url
 site_url = "https://hypernetwork-research-group.github.io/hyperbench"
-
 repo_name = "hypernetwork-research-group/hyperbench"
 repo_url = "https://github.com/hypernetwork-research-group/hyperbench"
-
-# The copyright notice appears in the page footer and can contain an HTML
-# fragment.
-#
-# Read more: https://zensical.org/docs/setup/basics/#copyright
 copyright = """
 Copyright &copy; 2026 The authors
 """
@@ -70,55 +39,7 @@ extra_css = ["stylesheets/extra.css"]
 icon = "fontawesome/brands/github"
 link = "https://github.com/hypernetwork-research-group/hyperbench"
 
-# With the `extra_javascript` option you can add your own JavaScript to your
-# project to customize the behavior according to your needs.
-#
-# The path provided should be relative to the "docs_dir".
-#
-# Read more: https://zensical.org/docs/customization/#additional-javascript
-#extra_javascript = ["javascripts/extra.js"]
-
-# ----------------------------------------------------------------------------
-# Section for configuring theme options
-# ----------------------------------------------------------------------------
 [project.theme]
-
-# change this to "classic" to use the traditional Material for MkDocs look.
-#variant = "classic"
-
-# Zensical allows you to override specific blocks, partials, or whole
-# templates as well as to define your own templates. To do this, uncomment
-# the custom_dir setting below and set it to a directory in which you
-# keep your template overrides.
-#
-# Read more:
-# - https://zensical.org/docs/customization/#extending-the-theme
-#
-#custom_dir = "overrides"
-
-# With the "favicon" option you can set your own image to use as the icon
-# browsers will use in the browser title bar or tab bar. The path provided
-# must be relative to the "docs_dir".
-#
-# Read more:
-# - https://zensical.org/docs/setup/logo-and-icons/#favicon
-# - https://developer.mozilla.org/en-US/docs/Glossary/Favicon
-#
-#favicon = "images/favicon.png"
-
-# Zensical supports more than 60 different languages. This means that the
-# labels and tooltips that Zensical's templates produce are translated.
-# The "language" option allows you to set the language used. This language
-# is also indicated in the HTML head element to help with accessibility
-# and guide search engines and translation tools.
-#
-# The default language is "en" (English). It is possible to create
-# sites with multiple languages and configure a language selector. See
-# the documentation for details.
-#
-# Read more:
-# - https://zensical.org/docs/setup/language/
-#
 language = "en"
 
 # Zensical provides a number of feature toggles that change the behavior
@@ -128,52 +49,12 @@ features = [
   "navigation.tabs",
   "navigation.sections",
   "navigation.tracking",
-  "navigation.expand",
-  "toc.integrate",
+  # "navigation.expand",
+  # "toc.integrate",
   "search.highlight",
   "content.code.copy",
   "content.code.select",
-
 ]
-
-# ----------------------------------------------------------------------------
-# You can configure your own logo to be shown in the header using the "logo"
-# option in the "theme" subsection. The logo must be a relative path to a file
-# in your "docs_dir", e.g., to use `docs/assets/logo.png` you would set:
-# ----------------------------------------------------------------------------
-#logo = "assets/logo.png"
-
-# ----------------------------------------------------------------------------
-# If you don't have a dedicated project logo, you can use a built-in icon from
-# the icon sets shipped in Zensical. Please note that the setting lives in a
-# different subsection, and that the above take precedence over the icon.
-#
-# Read more:
-# - https://zensical.org/docs/setup/logo-and-icons
-# - https://github.com/zensical/ui/tree/master/dist/.icons
-# ----------------------------------------------------------------------------
-#[project.theme.icon]
-#logo = "lucide/smile"
-
-# ----------------------------------------------------------------------------
-# In the "font" subsection you can configure the fonts used. By default, fonts
-# are loaded from Google Fonts, giving you a wide range of choices from a set
-# of suitably licensed fonts. There are options for a normal text font and for
-# a monospaced font used in code blocks.
-# ----------------------------------------------------------------------------
-#[project.theme.font]
-#text = "Inter"
-#code = "Jetbrains Mono"
-
-# ----------------------------------------------------------------------------
-# In the "palette" subsection you can configure options for the color scheme.
-# You can configure different color schemes, e.g., to turn on dark mode,
-# that the user can switch between. Each color scheme can be further
-# customized.
-#
-# Read more:
-# - https://zensical.org/docs/setup/colors/
-# ----------------------------------------------------------------------------
 [[project.theme.palette]]
 media = "(prefers-color-scheme: light)"
 scheme = "default"
@@ -182,8 +63,6 @@ accent = "indigo"
 toggle.icon = "lucide/sun"
 toggle.name = "Switch to dark mode"
 
-
-
 [[project.theme.palette]]
 media = "(prefers-color-scheme: dark)"
 scheme = "slate"
@@ -191,24 +70,6 @@ primary = "indigo"
 accent = "indigo"
 toggle.icon = "lucide/moon"
 toggle.name = "Switch to light mode"
-
-
-
-# ----------------------------------------------------------------------------
-# The "extra" section contains miscellaneous settings.
-# ----------------------------------------------------------------------------
-#[[project.extra.social]]
-#icon = "fontawesome/brands/github"
-#link = "https://github.com/user/repo"
-
-# ----------------------------------------------------------------------------
-# In this section you can configure the Markdown extensions that are used when
-# rendering your documentation. We enable the most useful extensions by default,
-# but you can customize this list to your needs.
-#
-# Read more:
-# - https://zensical.org/docs/setup/extensions/
-# ----------------------------------------------------------------------------
 [project.markdown_extensions.abbr]
 [project.markdown_extensions.admonition]
 [project.markdown_extensions.codehilite]
@@ -246,12 +107,7 @@ combine_header_slug = true
 custom_checkbox = true
 [project.markdown_extensions.pymdownx.tilde]
 
-# -----------------------------------------------------------------------------
 # API reference generation (developer-facing)
-#
-# This enables MkDocs' `mkdocstrings` directive syntax (the `:::` blocks in
-# docs/api/reference.md) while building with Zensical.
-# -----------------------------------------------------------------------------
 [project.plugins.mkdocstrings]
 default_handler = "python"
 
@@ -266,4 +122,4 @@ show_root_heading = true
 show_symbol_type_heading = true
 show_symbol_type_toc = true
 members_order = "source"
-show_submodules = true
+show_submodules = false

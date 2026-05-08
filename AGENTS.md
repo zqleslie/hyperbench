@@ -1,4 +1,4 @@
-
+<!-- Based on https://github.com/pandas-dev/pandas/blob/main/AGENTS.md  -->
 # HyperBench Agent Instructions
 
 ## Project Overview
