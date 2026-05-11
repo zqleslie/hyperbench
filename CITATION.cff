@@ -12,9 +12,9 @@ license: MIT
 version: 0.1.0
 
 authors:
-	- family-names: Citro
-		given-names: Tiziano
-		orcid: https://orcid.org/0009-0009-9569-5880
+  - family-names: Citro
+    given-names: Tiziano
+    orcid: https://orcid.org/0009-0009-9569-5880
     email: tcitro@unisa.it
   - family-names: De Vinco
     given-names: Daniele
@@ -22,18 +22,18 @@ authors:
     email: ddevinco@unisa.it
 
 keywords:
-	- hypergraph
-	- benchmarking
-	- machine-learning
-	- python
+  - hypergraph
+  - benchmarking
+  - machine-learning
+  - python
 
 preferred-citation:
-	type: software
-	title: HyperBench
-	authors:
-		- family-names: Citro
-			given-names: Tiziano
-		- family-names: De Vinco
-			given-names: Daniele
-	year: 2026
-	url: https://github.com/hypernetwork-research-group/hyperbench
+  type: software
+  title: HyperBench
+  authors:
+    - family-names: Citro
+      given-names: Tiziano
+    - family-names: De Vinco
+      given-names: Daniele
+  year: 2026
+  url: https://github.com/hypernetwork-research-group/hyperbench

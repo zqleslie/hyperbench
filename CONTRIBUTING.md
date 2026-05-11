@@ -81,7 +81,22 @@ git rev-parse --abbrev-ref HEAD | grep -Eq '^(feat|fix|chore|refactor|docs)\/[a-
 
 ## Quality gates
 
-## AI-assited contributions policy
+## AI-assisted contributions policy
+
+AI tools (for example, LLMs/code assistants) may be used to help prepare contributions.
+
+Contributors must:
+
+- **Disclose AI assistance** in the pull request description (what was generated and how it was used).
+- **Take full responsibility** for all submitted content, including correctness, clarity, style, tests, licensing, and originality.
+- **Review and validate manually** any AI-generated code/docs before submission.
+
+Maintainers may:
+
+- Request additional explanation, tests, or revisions for AI-assisted changes.
+- Ask contributors to rewrite or remove AI-generated content that does not meet project standards.
+- Reject contributions that lack disclosure or do not satisfy quality, security, or licensing expectations.
+
 
 ## Docs Contribution
 
