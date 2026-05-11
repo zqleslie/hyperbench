@@ -25,6 +25,9 @@ nav = [
   ] },
   { "Development" = [
     { "Overview" = "development/development.md" },
+    { "Contributing" = "development/contribution.md" },
+    { "Makefile" = "development/makefile.md" },
+    { "Policies" = "development/policies.md" },
   ] },
   { "API Reference" = [
     { "Overview" = "api/reference.md" },

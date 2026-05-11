@@ -1,0 +1,254 @@
+<!-- based on https://pandas.pydata.org/docs/development/contributing.html -->
+
+# Contributing to hyperbench
+
+All contributions, bug reports, bug fixes, documentation improvements,
+enhancements, and ideas are welcome. We ask that contributors follow
+all contribution guidelines when participating with hyperbench.
+
+
+## Starting out
+
+If you are brand new to open-source development, we recommend searching
+the `GitHub "issues" tab <https://github.com/hypernetwork-research-group/hyperbench/issues>`_
+to find issues that interest you and are available to work on. Issues available to work on are:
+
+* Issues without the label ``Needs Triage`` or ``Needs Discussion``. These issues require clarification and confirmation
+  from a maintainer before proceeding.
+* Issues that have not been started by another contributor. Please check that another contributor has not commented their intent
+  to work on the issue or already submitted an open pull request to address the issue before proceeding.
+
+Once you've found an interesting, available issue, leave a comment with your intention
+to start working on it. If somebody else has
+already commented on the issue but they have shown a lack of activity in the issue
+or a pull request in the past 2-3 weeks, you may take it over.
+
+If for whatever reason you are not able to continue working with the issue, please
+leave a comment on an issue, so other people know it's available again.
+
+## Submitting a pull request
+
+### Version control, Git, and GitHub
+
+hyperbench is hosted on `GitHub <https://www.github.com/hypernetwork-research-group/hyperbench>`_, and to
+contribute, you will need to sign up for a `free GitHub account
+<https://github.com/signup/free>`_. We use `Git <https://git-scm.com/>`_ for
+version control to allow many people to work together on the project.
+
+If you are new to Git, you can reference some of these resources for learning Git. Feel free to reach out
+to the :ref:`contributor community <community>` for help if needed:
+
+* `Git documentation <https://git-scm.com/doc>`_.
+
+Also, the project follows a forking workflow further described on this page whereby
+contributors fork the repository, make changes and then create a pull request.
+So please be sure to read and follow all the instructions in this guide.
+
+If you are new to contributing to projects through forking on GitHub,
+take a look at the `GitHub documentation for contributing to projects <https://docs.github.com/en/get-started/quickstart/contributing-to-projects>`_.
+GitHub provides a quick tutorial using a test repository that may help you become more familiar
+with forking a repository, cloning a fork, creating a feature branch, pushing changes and
+making pull requests.
+
+Below are some useful resources for learning more about forking and pull requests on GitHub:
+
+* the `GitHub documentation for forking a repo <https://docs.github.com/en/get-started/quickstart/fork-a-repo>`_.
+* the `GitHub documentation for collaborating with pull requests <https://docs.github.com/en/pull-requests/collaborating-with-pull-requests>`_.
+* the `GitHub documentation for working with forks <https://docs.github.com/en/pull-requests/collaborating-with-pull-requests/working-with-forks>`_.
+
+### Getting started with Git
+
+`GitHub has instructions <https://docs.github.com/en/get-started/quickstart/set-up-git>`__ for installing git,
+setting up your SSH key, and configuring git.  All these steps need to be completed before
+you can work seamlessly between your local repository and GitHub.
+
+### Create a fork of hyperbench
+
+You will need your own copy of hyperbench (aka fork) to work on the code. Go to the `hyperbench project
+page <https://github.com/hypernetwork-research-group/hyperbench>`_ and hit the ``Fork`` button. Please uncheck the box to copy only the main branch before selecting ``Create Fork``.
+You will want to clone your fork to your machine
+
+```bash
+    git clone https://github.com/your-user-name/hyperbench.git hyperbench-yourname
+    cd hyperbench-yourname
+    git remote add upstream https://github.com/hypernetwork-research-group/hyperbench.git
+    git fetch upstream --tags
+```
+
+This creates the directory ``hyperbench-yourname`` and connects your repository to
+the upstream (main project) *hyperbench* repository.
+
+> Notes
+>
+>    Performing a shallow clone (with ``--depth==N``, for some ``N`` greater
+>    or equal to 1) might break some tests and features as ``pd.show_versions()``
+>    as the version number cannot be computed anymore.
+
+### Creating a feature branch
+
+Your local ``main`` branch should always reflect the current state of hyperbench repository.
+First ensure it's up-to-date with the main hyperbench repository.
+
+```bash
+    git checkout main
+    git pull upstream main --ff-only
+```
+
+Then, create a feature branch for making your changes. For example
+
+```bash
+    git checkout -b shiny-new-feature
+```
+
+This changes your working branch from ``main`` to the ``shiny-new-feature`` branch.  Keep any
+changes in this branch specific to one bug or feature so it is clear
+what the branch brings to hyperbench. You can have many feature branches
+and switch in between them using the ``git checkout`` command.
+
+When you want to update the feature branch with changes in main after
+you created the branch, check the section on
+:ref:`updating a PR <contributing.update-pr>`.
+
+
+### Making code changes
+
+Before modifying any code, ensure you follow the :ref:`contributing environment <contributing_environment>`
+guidelines to set up an appropriate development environment.
+
+Then once you have made code changes, you can see all the changes you've currently made by running.
+
+```bash
+    git status
+```
+
+For files you intended to modify or add, run.
+
+```bash
+    git add path/to/file-to-be-added-or-changed.py
+```
+
+Running ``git status`` again should display
+
+```bash
+    On branch shiny-new-feature
+         modified:   /relative/path/to/file-to-be-added-or-changed.py
+```
+
+
+Finally, commit your changes to your local repository with an explanatory commit
+message
+
+```bash
+    git commit -m "your commit message goes here"
+```
+
+
+### Pushing your changes
+
+When you want your changes to appear publicly on your GitHub page, push your
+forked feature branch's commits
+
+```bash
+    git push origin shiny-new-feature
+```
+
+Here ``origin`` is the default name given to your remote repository on GitHub.
+You can see the remote repositories
+
+```bash
+    git remote -v
+```
+
+If you added the upstream repository as described above you will see something
+like
+
+```bash
+    origin  git@github.com:yourname/hyperbench.git (fetch)
+    origin  git@github.com:yourname/hyperbench.git (push)
+    upstream        git://github.com/hypernetwork-research-group/hyperbench.git (fetch)
+    upstream        git://github.com/hypernetwork-research-group/hyperbench.git (push)
+```
+Now your code is on GitHub, but it is not yet a part of the hyperbench project. For that to
+happen, a pull request needs to be submitted on GitHub.
+
+Making a pull request
+
+Once you have finished your code changes, your code change will need to follow the
+:ref:`hyperbench contribution guidelines <contributing_codebase>` to be successfully accepted.
+
+If everything looks good, you are ready to make a pull request. A pull request is how
+code from your local repository becomes available to the GitHub community to review
+and merged into the project to appear in the next release. To submit a pull request:
+
+- Navigate to your repository on GitHub
+- Click on the ``Compare & pull request`` button
+- You can then click on ``Commits`` and ``Files Changed`` to make sure everything looks
+   okay one last time
+- Write a descriptive title that includes prefixes. hyperbench uses a convention for title
+   prefixes. Here are some common ones along with general guidelines for when to use them:
+
+    - `feat:` — A new feature or enhancement to an existing feature.
+    - `fix:` — A bug fix or patch to existing code.
+    - `chore:` — Routine tasks, maintenance, or non-code changes (e.g
+        updating documentation, refactoring without changing functionality).
+    - `refactor:` — A code change that neither fixes a bug nor adds a feature but makes the code cleaner or more efficient.
+    - `docs:` — Changes to documentation only.
+
+- Complete the checklist template in the body of the pull request and write an additional description below the checklist if necessary.
+- Click ``Send Pull Request``.
+
+This request then goes to the repository maintainers, and they will review
+the code.
+
+>> Notes
+>
+>    A pull request should be associated with an open Github issue except if the change is trivial such as fixing a typo.
+>   Pull requests that do not abide by all the applicable contribution guidelines may be closed by a maintainer. Contributors
+>   who have shown continued, quality pull requests may be exempt from following all guidelines strictly.
+
+
+### Updating your pull request
+
+Based on the review you get on your pull request, you will probably need to make
+some changes to the code. You can follow the :ref:`code committing steps <contributing.commit-code>`
+again to address any feedback and update your pull request.
+
+It is also important that updates in the hyperbench ``main`` branch are reflected in your pull request.
+To update your feature branch with changes in the hyperbench ``main`` branch, run:
+
+```bash
+    git checkout shiny-new-feature
+    git fetch upstream
+    git merge upstream/main
+```
+
+If there are no conflicts (or they could be fixed automatically), a file with a
+default commit message will open, and you can simply save and quit this file.
+
+If there are merge conflicts, you need to solve those conflicts. See for
+example at https://help.github.com/articles/resolving-a-merge-conflict-using-the-command-line/
+for an explanation on how to do this.
+
+Once the conflicts are resolved, run:
+
+```bash
+git add -u # to stage any files you've updated;
+git commit # to finish the merge.
+```
+
+>> Notes
+>
+>    If you have uncommitted changes at the moment you want to update the branch with
+>    ``main``, you will need to ``stash`` them prior to updating (see the
+>    `stash docs <https://git-scm.com/book/en/v2/Git-Tools-Stashing-and-Cleaning>`__).
+>    This will effectively store your changes and they can be reapplied after updating.
+
+After the feature branch has been updated locally, you can now update your pull
+request by pushing to the branch on GitHub:
+
+```bash
+    git push origin shiny-new-feature
+```
+
+Any ``git push`` will automatically update your pull request with your branch's changes
+and restart the :ref:`Continuous Integration <contributing.ci>` checks.

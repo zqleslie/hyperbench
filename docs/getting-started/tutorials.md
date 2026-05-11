@@ -8,6 +8,8 @@ Run examples from the repository root:
 make setup
 # optional
 make setup-tensorboard
+
+make run examples/early_stopping.py
 ```
 
 | Example | What it demonstrates | Run |

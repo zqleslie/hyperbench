@@ -6,19 +6,16 @@
 ## Contributing to the code base
 ## hyperbench maintenance
 ## Internals
-## Copy on write
-## Debugging C extensions
-## Extending hyperbench
 ## Developer
 ## Policies
 ## Contributor community
-
 
 
 ## Prerequisites
 
 - [uv](https://github.com/astral-sh/uv)
 - [make](https://www.gnu.org/software/make/)
+- [pre-commit](https://pre-commit.com)
 
 ## Build
 
@@ -29,10 +26,27 @@ git clone https://www.github.com/hypernetwork-research-group/hyperbench.git
 cd hyperbench
 ```
 
+To simplify development, we provide a Makefile with common targets for building, testing, linting, and more. You can see all available commands with:
+
+```bash
+make help
+```
+
+or check the [Makefile documentation](../development/makefile.md) for details on each command.
+
 To build the project, run:
 ```bash
 make
 ```
+
+### Tensorboard support
+To set up TensorBoard support, run:
+
+```bash
+make setup-tensorboard
+```
+This will install the optional dependencies required for TensorBoard integration and set up the necessary configuration.
+
 
 ### Linter and type checker
 

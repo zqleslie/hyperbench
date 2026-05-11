@@ -34,6 +34,8 @@ make
 make run examples/mlp_common_neighbors.py
 ```
 
+For a full explanation of the project structure, commands, and development guidelines, please refer to the [documentation](https://hyperbench.readthedocs.io/en/latest/).
+
 ## Contribution types and expectations
 
 ### Feature
@@ -144,8 +146,6 @@ make docs
 - API reference is generated with [mkdocstrings](https://mkdocstrings.github.io/) from docstrings in the codebase.
 
 ### Docstring conventions
-<!-- Google and zensical docs linking -->
-
 References:
 - [Google Python Style Guide](https://google.github.io/styleguide/pyguide.html#38-comments-and-docstrings)
 - [Zensical docs conventions](https://zensical.org/docs/get-started/)
