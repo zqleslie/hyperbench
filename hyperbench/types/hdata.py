@@ -1,7 +1,7 @@
 import torch
 
 from torch import Tensor
-from typing import Any
+from typing import TYPE_CHECKING, Any
 from collections.abc import Sequence
 from hyperbench.utils import (
     NodeSpaceFiller,
@@ -15,6 +15,9 @@ from hyperbench.utils import (
 
 from hyperbench.nn.enricher import EnrichmentMode, NodeEnricher, HyperedgeEnricher
 from hyperbench.types.hypergraph import HyperedgeIndex
+
+if TYPE_CHECKING:
+    from hyperbench.train import NegativeSampler
 
 
 class HData:
@@ -177,6 +180,25 @@ class HData:
             global_node_ids=max(hdatas, key=lambda hdata: hdata.num_nodes).global_node_ids,
             y=new_y,
         )
+
+    def add_negative_samples(
+        self,
+        negative_sampler: "NegativeSampler",
+        seed: int | None = None,
+    ) -> "HData":
+        """
+        Return a new :class:`HData` with sampled negative hyperedges added.
+
+        Args:
+            negative_sampler: Sampler used to generate negative hyperedges from this instance.
+            seed: Optional random seed used for both negative sampling and the final shuffle.
+
+        Returns:
+            A new :class:`HData` containing the original hyperedges and sampled negatives.
+        """
+        neg_hdata = negative_sampler.sample(self, seed=seed)
+        hdata_with_negatives = self.cat_same_node_space([self, neg_hdata])
+        return hdata_with_negatives.shuffle(seed=seed)
 
     @classmethod
     def empty(cls) -> "HData":

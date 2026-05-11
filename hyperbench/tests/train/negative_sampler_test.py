@@ -75,6 +75,20 @@ def test_random_negative_sampler_sample_no_edge_attr(mock_hdata_no_attr):
     assert result.hyperedge_attr is None
 
 
+def test_random_negative_sampler_sample_with_seed_is_reproducible(mock_hdata_with_attr):
+    sampler = RandomNegativeSampler(num_negative_samples=3, num_nodes_per_sample=2)
+
+    result_a = sampler.sample(mock_hdata_with_attr, seed=123)
+    result_b = sampler.sample(mock_hdata_with_attr, seed=123)
+
+    assert torch.equal(result_a.x, result_b.x)
+    assert torch.equal(result_a.hyperedge_index, result_b.hyperedge_index)
+    assert result_a.hyperedge_attr is not None
+    assert result_b.hyperedge_attr is not None
+    assert torch.equal(result_a.hyperedge_attr, result_b.hyperedge_attr)
+    assert torch.equal(result_a.y, result_b.y)
+
+
 def test_random_negative_sampler_handles_missing_global_node_ids(mock_hdata_no_attr):
     mock_hdata_no_attr.global_node_ids = None
 

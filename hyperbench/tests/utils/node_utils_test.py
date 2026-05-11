@@ -1,12 +1,73 @@
 import pytest
+import torch
 
 from hyperbench.utils import (
+    assign_hyperedge_label_to_nodes,
     is_assigned_to_all,
     is_assigned_to_first,
     is_inductive_setting,
     is_transductive_setting,
     is_transductive_split,
 )
+
+
+def test_assign_hyperedge_label_to_nodes_maps_labels_to_node_sets():
+    hyperedge_index = torch.tensor(
+        [
+            [2, 0, 1, 3, 4, 2],
+            [1, 0, 0, 2, 2, 1],
+        ]
+    )
+    y = torch.tensor([1, 0, 1])
+
+    labels_by_nodes = assign_hyperedge_label_to_nodes(
+        hyperedge_index=hyperedge_index,
+        y=y,
+        num_hyperedges=3,
+    )
+
+    expected: dict[frozenset[int], float] = {
+        frozenset({0, 1}): 1,
+        frozenset({2}): 0,
+        frozenset({3, 4}): 1,
+    }
+
+    assert labels_by_nodes.keys() == expected.keys()
+    for nodes, expected_label in expected.items():
+        assert torch.equal(torch.as_tensor(labels_by_nodes[nodes]), torch.as_tensor(expected_label))
+
+
+def test_assign_hyperedge_label_to_nodes_includes_empty_hyperedge_slots():
+    hyperedge_index = torch.tensor([[0, 1], [0, 0]])
+    y = torch.tensor([1, 0])
+
+    labels_by_nodes = assign_hyperedge_label_to_nodes(
+        hyperedge_index=hyperedge_index,
+        y=y,
+        num_hyperedges=2,
+    )
+
+    expected: dict[frozenset[int], float] = {
+        frozenset({0, 1}): 1,
+        frozenset(): 0,
+    }
+
+    assert labels_by_nodes.keys() == expected.keys()
+    for nodes, expected_label in expected.items():
+        assert torch.equal(torch.as_tensor(labels_by_nodes[nodes]), torch.as_tensor(expected_label))
+
+
+def test_assign_hyperedge_label_to_nodes_returns_empty_mapping_without_hyperedges():
+    hyperedge_index = torch.empty((2, 0), dtype=torch.long)
+    y = torch.empty((0,), dtype=torch.float)
+
+    labels_by_nodes = assign_hyperedge_label_to_nodes(
+        hyperedge_index=hyperedge_index,
+        y=y,
+        num_hyperedges=0,
+    )
+
+    assert labels_by_nodes == {}
 
 
 @pytest.mark.parametrize(

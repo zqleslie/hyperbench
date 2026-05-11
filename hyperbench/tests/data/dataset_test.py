@@ -2,9 +2,11 @@ import re
 import pytest
 import torch
 
+from typing import cast
 from unittest.mock import patch, MagicMock
 from hyperbench.data import AlgebraDataset, Dataset, HIFLoader, SamplingStrategy
 from hyperbench.nn import NodeEnricher, HyperedgeEnricher
+from hyperbench.train import NegativeSampler
 from hyperbench.types import HData
 
 
@@ -101,6 +103,30 @@ def mock_hdata_random_ids() -> HData:
     x = torch.ones((3, 1), dtype=torch.float)
     hyperedge_index = torch.tensor([[0, 1, 2], [0, 0, 1]], dtype=torch.long)
     return HData(x=x, hyperedge_index=hyperedge_index)
+
+
+@pytest.fixture
+def mock_negative_sampler() -> tuple[NegativeSampler, MagicMock]:
+    def sample(data: HData, seed: int | None = None) -> HData:
+        negative_nodes = torch.tensor([0, 2], dtype=torch.long, device=data.device)
+        negative_hyperedge_id = torch.full(
+            negative_nodes.shape,
+            data.num_hyperedges,
+            dtype=torch.long,
+            device=data.device,
+        )
+        return HData(
+            x=data.x,
+            hyperedge_index=torch.stack([negative_nodes, negative_hyperedge_id]),
+            num_nodes=data.num_nodes,
+            num_hyperedges=1,
+            global_node_ids=data.global_node_ids,
+            y=torch.zeros(1, dtype=torch.float, device=data.device),
+        )
+
+    sampler = MagicMock(spec=NegativeSampler)
+    sampler.sample.side_effect = sample
+    return cast(NegativeSampler, sampler), sampler
 
 
 def test_preloaded_dataset_loads_hdata_when_hdata_is_none():
@@ -758,6 +784,63 @@ def test_update_from_hdata_preserves_subclass_type(mock_hdata):
     result = dataset.update_from_hdata(new_hdata)
 
     assert type(result) is AlgebraDataset
+
+
+def test_add_negative_samples_returns_new_dataset(mock_hdata, mock_negative_sampler):
+    dataset = Dataset(hdata=mock_hdata)
+    sampler, _ = mock_negative_sampler
+
+    result = dataset.add_negative_samples(sampler, seed=42)
+
+    assert result is not dataset
+    assert result.hdata is not mock_hdata
+    assert dataset.hdata is mock_hdata
+    assert result.hdata.num_hyperedges == mock_hdata.num_hyperedges + 1
+
+
+@pytest.mark.parametrize(
+    "strategy, expected_len",
+    [
+        pytest.param(SamplingStrategy.NODE, 3, id="node_strategy"),
+        pytest.param(SamplingStrategy.HYPEREDGE, 3, id="hyperedge_strategy"),
+    ],
+)
+def test_add_negative_samples_preserves_sampling_strategy(
+    mock_hdata,
+    mock_negative_sampler,
+    strategy,
+    expected_len,
+):
+    dataset = Dataset(hdata=mock_hdata, sampling_strategy=strategy)
+    sampler, _ = mock_negative_sampler
+
+    result = dataset.add_negative_samples(sampler, seed=42)
+
+    assert result.sampling_strategy == strategy
+    assert len(result) == expected_len
+
+
+def test_add_negative_samples_preserves_subclass_type(mock_hdata, mock_negative_sampler):
+    dataset = AlgebraDataset(hdata=mock_hdata)
+    sampler, _ = mock_negative_sampler
+
+    result = dataset.add_negative_samples(sampler, seed=42)
+
+    assert type(result) is AlgebraDataset
+
+
+def test_add_negative_samples_passes_seed_to_hdata(mock_hdata, mock_negative_sampler):
+    dataset = Dataset(hdata=mock_hdata)
+    sampler, sampler_mock = mock_negative_sampler
+
+    dataset.add_negative_samples(sampler, seed=123)
+
+    sampler_mock.sample.assert_called_once()
+    sampled_hdata: HData = sampler_mock.sample.call_args.args[0]
+    assert sampled_hdata is not mock_hdata
+    assert torch.equal(sampled_hdata.x, mock_hdata.x)
+    assert torch.equal(sampled_hdata.hyperedge_index, mock_hdata.hyperedge_index)
+    assert sampler_mock.sample.call_args.kwargs["seed"] == 123
 
 
 @pytest.fixture

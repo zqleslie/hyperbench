@@ -1,6 +1,6 @@
 import torch
 
-from typing import Any
+from typing import TYPE_CHECKING, Any
 from torch import Tensor
 from torch.utils.data import Dataset as TorchDataset
 from hyperbench.nn import EnrichmentMode, NodeEnricher, HyperedgeEnricher
@@ -15,6 +15,9 @@ from hyperbench.utils import (
 
 from hyperbench.data.sampling import SamplingStrategy, create_sampler_from_strategy
 from hyperbench.data.hif import HIFLoader, HIFProcessor
+
+if TYPE_CHECKING:
+    from hyperbench.train import NegativeSampler
 
 
 class Dataset(TorchDataset):
@@ -222,6 +225,28 @@ class Dataset(TorchDataset):
             The :class:`Dataset` instance with the provided :class:`HData`.
         """
         return self.__class__(hdata=hdata, sampling_strategy=self.sampling_strategy)
+
+    def add_negative_samples(
+        self,
+        negative_sampler: "NegativeSampler",
+        seed: int | None = None,
+    ) -> "Dataset":
+        """
+        Create a new :class:`Dataset` with sampled negative hyperedges added.
+
+        Args:
+            negative_sampler: Sampler used to generate negative hyperedges from this dataset's ``hdata``.
+            seed: Optional random seed used for both negative sampling and the final shuffle.
+
+        Returns:
+            A new :class:`Dataset` instance with positives and sampled negatives.
+        """
+        hdata_with_negatives = self.hdata.clone()
+        hdata_with_negatives = hdata_with_negatives.add_negative_samples(
+            negative_sampler=negative_sampler,
+            seed=seed,
+        )
+        return self.update_from_hdata(hdata_with_negatives)
 
     def remove_hyperedges_with_fewer_than_k_nodes(self, k: int) -> None:
         """

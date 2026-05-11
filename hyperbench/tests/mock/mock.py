@@ -4,6 +4,7 @@ from collections.abc import Iterator
 from unittest.mock import MagicMock
 from contextlib import contextmanager
 
+
 MOCK_BASE_PATH = "hyperbench/tests/mock"
 
 

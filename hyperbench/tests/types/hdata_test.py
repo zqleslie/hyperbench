@@ -1,13 +1,15 @@
 import re
-
 import pytest
 import torch
 
+from typing import cast
 from unittest.mock import MagicMock
 from torch import Tensor
 from hyperbench import utils
 from hyperbench.nn import NodeEnricher, HyperedgeEnricher
+from hyperbench.train import NegativeSampler, RandomNegativeSampler
 from hyperbench.types import HData
+from hyperbench.utils import assign_hyperedge_label_to_nodes
 
 
 @pytest.fixture
@@ -42,6 +44,30 @@ def mock_hdata_stats():
         ]
     )
     return HData(x=x, hyperedge_index=hyperedge_index)
+
+
+@pytest.fixture
+def mock_negative_sampler() -> tuple[NegativeSampler, MagicMock]:
+    def sample(data: HData, seed: int | None = None) -> HData:
+        negative_nodes = torch.tensor([0, 2], dtype=torch.long, device=data.device)
+        negative_hyperedge_id = torch.full(
+            size=negative_nodes.shape,
+            fill_value=data.num_hyperedges,
+            dtype=torch.long,
+            device=data.device,
+        )
+        return HData(
+            x=data.x,
+            hyperedge_index=torch.stack([negative_nodes, negative_hyperedge_id]),
+            num_nodes=data.num_nodes,
+            num_hyperedges=1,
+            global_node_ids=data.global_node_ids,
+            y=torch.zeros(1, dtype=torch.float, device=data.device),
+        )
+
+    sampler = MagicMock(spec=NegativeSampler)
+    sampler.sample.side_effect = sample
+    return cast(NegativeSampler, sampler), sampler
 
 
 @pytest.mark.parametrize(
@@ -467,6 +493,60 @@ def test_cat_same_node_space_drops_hyperedge_attr_when_partially_missing():
     result = HData.cat_same_node_space([hdata1, hdata2])
 
     assert result.hyperedge_attr is None
+
+
+def test_add_negative_samples_combines_positive_and_negative_hyperedges(mock_negative_sampler):
+    hdata = HData(
+        x=torch.arange(4, dtype=torch.float).unsqueeze(1),
+        hyperedge_index=torch.tensor([[0, 1, 2, 3], [0, 0, 1, 1]]),
+    )
+    sampler, sampler_mock = mock_negative_sampler
+
+    result = hdata.add_negative_samples(sampler, seed=42)
+
+    assert result.num_nodes == hdata.num_nodes
+    assert result.num_hyperedges == hdata.num_hyperedges + 1
+    assert torch.equal(result.x, hdata.x)
+    assert assign_hyperedge_label_to_nodes(
+        result.hyperedge_index, result.y, result.num_hyperedges
+    ) == {
+        frozenset({0, 1}): 1,
+        frozenset({2, 3}): 1,
+        frozenset({0, 2}): 0,
+    }
+    sampler_mock.sample.assert_called_once_with(hdata, seed=42)
+
+
+def test_add_negative_samples_returns_new_hdata_and_keeps_source_unchanged(
+    mock_negative_sampler,
+):
+    original_hyperedge_index = torch.tensor([[0, 1, 2, 3], [0, 0, 1, 1]])
+    hdata = HData(
+        x=torch.arange(4, dtype=torch.float).unsqueeze(1),
+        hyperedge_index=original_hyperedge_index,
+    )
+    sampler, _ = mock_negative_sampler
+
+    result = hdata.add_negative_samples(sampler, seed=42)
+
+    assert result is not hdata
+    assert result.hyperedge_index is not hdata.hyperedge_index
+    assert torch.equal(hdata.hyperedge_index, original_hyperedge_index)
+    assert torch.equal(hdata.y, torch.ones(hdata.num_hyperedges, dtype=torch.float))
+
+
+def test_add_negative_samples_with_seed_is_reproducible():
+    hdata = HData(
+        x=torch.arange(5, dtype=torch.float).unsqueeze(1),
+        hyperedge_index=torch.tensor([[0, 1, 2, 3, 4], [0, 0, 1, 1, 2]]),
+    )
+    sampler = RandomNegativeSampler(num_negative_samples=3, num_nodes_per_sample=2)
+
+    result_a = hdata.add_negative_samples(sampler, seed=123)
+    result_b = hdata.add_negative_samples(sampler, seed=123)
+
+    assert torch.equal(result_a.hyperedge_index, result_b.hyperedge_index)
+    assert torch.equal(result_a.y, result_b.y)
 
 
 @pytest.mark.parametrize(

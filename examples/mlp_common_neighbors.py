@@ -9,7 +9,7 @@ from torchmetrics.classification import (
 from hyperbench.hlp import CommonNeighborsHlpModule, MLPHlpModule
 from hyperbench.nn import LaplacianPositionalEncodingEnricher
 from hyperbench.train import MultiModelTrainer, RandomNegativeSampler
-from hyperbench.types import HData, ModelConfig
+from hyperbench.types import ModelConfig
 from hyperbench.data import AlgebraDataset, DataLoader, SamplingStrategy
 
 
@@ -63,10 +63,7 @@ if __name__ == "__main__":
             num_negative_samples=num_negative_samples,
             num_nodes_per_sample=int(ds.stats()["avg_degree_hyperedge"]),
         )
-        neg_hdata = negative_sampler.sample(ds.hdata)
-        combined_hdata = HData.cat_same_node_space([ds.hdata, neg_hdata])
-        shuffled_hdata = combined_hdata.shuffle(seed=42)
-        ds_with_negatives = ds.update_from_hdata(shuffled_hdata)
+        ds_with_negatives = ds.add_negative_samples(negative_sampler, seed=42)
 
         if name == "Train":
             train_dataset = ds_with_negatives
@@ -76,7 +73,7 @@ if __name__ == "__main__":
             test_dataset = ds_with_negatives
 
         if verbose:
-            print(f"{name} dataset after adding negative samples: {shuffled_hdata}\n")
+            print(f"{name} dataset after adding negative samples: {ds_with_negatives.hdata}\n")
 
     print("Enriching node features...")
 
