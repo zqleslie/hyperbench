@@ -34,15 +34,7 @@ make
 make run examples/mlp_common_neighbors.py
 ```
 
-## Contribution types + expectations
-
-### Bugfix
-Best for: incorrect outputs, crashes, regressions, or broken docs/examples.
-
-Expectations:
-- Include a minimal reproduction (or a failing test) and a clear fix.
-- Add a regression test when feasible.
-- Keep the PR small and focused on the root cause.
+## Contribution types and expectations
 
 ### Feature
 Best for: new capabilities (models, datasets, training features, utilities).
@@ -52,22 +44,31 @@ Expectations:
 - Include tests for the new behavior.
 - Update docs (or docstrings) if user-facing behavior changes.
 
-### Docs
-Check [Docs Contribution](#docs-contribution) for more details.
-
-Best for: docs pages, API docs clarity, examples, READMEs, contributor docs.
+### Fix
+Best for: incorrect outputs, crashes, regressions, or broken docs/examples.
 
 Expectations:
-- Ensure docs build cleanly (make docs-build).
+- Include a minimal reproduction (or a failing test) and a clear fix.
+- Add a regression test when feasible.
+- Keep the PR small and focused on the root cause.
+
+### Docs
+Check [guidelines](#contributing-to-the-documentation) for more details.
+
+Best for: documentation, API docs clarity, examples, READMEs.
+
+Expectations:
+- Ensure documentation build correctly (`make docs-build`).
 - Keep examples deterministic and copy-paste runnable when possible.
 
 ## Workflow
 
-1. Fork the repo and create a branch (see [Branch naming](#branch-naming)).
+1. Fork the repo and create a branch (see [branch naming](#branch-naming)).
 2. Make changes with tests/docs as needed.
-3. Run local quality gates (see [Quality gates](#quality-gates)).
+3. Run local quality gates (see [quality gates](#quality-gates)).
 4. Open a PR and fill in the PR template.
-5. Address review feedback; keep rebases/force-pushes reasonable.
+5. Address review feedback.
+6. Ensure your changes are rebased onto the latest main branch before merge.
 
 ### Commit message style
 
@@ -113,25 +114,21 @@ git rev-parse --abbrev-ref HEAD | grep -Eq '^(feat|fix|chore|refactor|docs)\/[a-
   - Linting and formatting: `make check` (which runs `ruff format` and `ty check`).
   - Running tests: `make test` (or `make stest <path>` for specific tests).
 
+Maintainers may:
+- Request additional explanation, tests, or revisions.
+- Ask contributors to rewrite or remove content that does not meet project standards.
+- Reject contributions that do not satisfy quality, security, or other expectations.
 
-## AI-assisted contributions policy
+## AI-assisted contribution policy
 
 AI tools (for example, LLMs/code assistants) may be used to help prepare contributions.
 
 Contributors must:
 
-- **Disclose AI assistance** in the pull request description (what was generated and how it was used).
 - **Take full responsibility** for all submitted content, including correctness, clarity, style, tests, licensing, and originality.
 - **Review and validate manually** any AI-generated code/docs before submission.
 
-Maintainers may:
-
-- Request additional explanation, tests, or revisions for AI-assisted changes.
-- Ask contributors to rewrite or remove AI-generated content that does not meet project standards.
-- Reject contributions that lack disclosure or do not satisfy quality, security, or licensing expectations.
-
-
-## Docs Contribution
+## Contributing to the documentation
 
 ```bash
 # to build the docs locally
@@ -141,16 +138,22 @@ make docs-serve
 # or for a one-off command
 make docs
 ```
+
 ### Configuration
 - Docs are built with zensical, which uses a custom theme and configuration (see [zensical.toml](./zensical.toml)).
 - API reference is generated with [mkdocstrings](https://mkdocstrings.github.io/) from docstrings in the codebase.
 
-
 ### Docstring conventions
+<!-- Google and zensical docs linking -->
+
+References:
+- [Google Python Style Guide](https://google.github.io/styleguide/pyguide.html#38-comments-and-docstrings)
+- [Zensical docs conventions](https://zensical.org/docs/get-started/)
+
 - Use Google-style docstrings with sections like `Args:`, `Returns:`, and `Examples:`.
 - Prefer fenced code blocks with syntax highlighting for examples.
 - Use type formatting conventions (e.g., `list[str]` instead of `List[str]`).
 
 ### API reference
 
-Each API reference is generated with `mkdocstrings` and lives under `docs/api/`. Each module should have a corresponding markdown file (e.g., `data.md` for `hyperbench.data`) with an overview and the `::: module` directive.
+Each API reference is generated with `mkdocstrings` and is under `docs/api/`. Each module should have a corresponding markdown file (e.g., `data.md` for `hyperbench.data`) with an overview and the `::: module` directive.

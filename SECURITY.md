@@ -1,8 +1,8 @@
-# Security Policy
+# Security policy
 
-This document describes how to report security issues in HyperBench and what to expect from maintainers.
+This document describes how to report security issues and what to expect from maintainers.
 
-## Supported Versions
+## Supported versions
 
 HyperBench is research-oriented and evolves quickly. Security fixes are provided on a best-effort basis.
 
@@ -14,7 +14,7 @@ HyperBench is research-oriented and evolves quickly. Security fixes are provided
 
 If you can reproduce a security issue on `main`, that is the most actionable report.
 
-## Reporting a Vulnerability
+## Reporting a vulnerability
 
 Please do **not** open a public GitHub issue for suspected vulnerabilities.
 
@@ -34,15 +34,9 @@ To help us triage quickly, include:
 - Your environment (OS, Python version, install method)
 - Any relevant logs, stack traces, or screenshots
 
-## Disclosure Process
+## Disclosure process
 
-This repo follows coordinated disclosure:
-
-- We aim to acknowledge reports within **72 hours**.
-- We aim to provide a status update within **7 days** (even if it’s “still investigating”).
-- If confirmed, we will work on a fix and publish an advisory/release notes as appropriate.
-
-Timelines can vary depending on maintainer availability and severity.
+This repo follows coordinated disclosure, but timelines can vary depending on maintainer availability and severity.
 
 ## Scope
 
@@ -56,7 +50,7 @@ Out of scope:
 - Vulnerabilities in upstream dependencies (e.g., PyTorch, PyG, NumPy). Please report those to the upstream project.
 - Vulnerabilities requiring a fully compromised environment (unless there is an additional HyperBench-specific escalation)
 
-## Security Updates
+## Security updates
 
 When a fix is available, we will typically communicate via one or more of:
 
