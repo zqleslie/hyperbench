@@ -33,13 +33,11 @@ Use HyperBench to:
 | Feature | What you can do | Highlights | Package |
 | :--- | :--- | :--- | :--- |
 | **Dataset management** | Load, preprocess, and manage hypergraph datasets | HIF loader/processor, built-in datasets like Cora, Pubmed, DBLP, Amazon, IMDB | `hyperbench.data` |
-| **Sampling & batching** | Efficiently sample subgraphs and prepare training batches | DataLoader, node/hyperedge samplers, customizable sampling strategies | `hyperbench.data` |
-| **Training & benchmarking** | Train and benchmark models out of the box | Multi-model trainer, negative sampling, schedulers, Markdown/LaTeX result tables | `hyperbench.train` |
+| **Sampling and batching** | Efficiently sample subgraphs and prepare training batches | DataLoader, node/hyperedge samplers, customizable sampling strategies | `hyperbench.data` |
+| **Training and benchmarking** | Train and benchmark models out of the box | Multi-model trainer, negative sampling, schedulers, Markdown/LaTeX result tables | `hyperbench.train` |
 | **Models** | Access a wide range of hypergraph models | HGNN, HGNNP, HNHN, HyperGCN, GCN, MLP/SLP, NHP, Node2Vec, VilLain, CommonNeighbors | `hyperbench.models` |
 | **Neural network components** | Build custom architectures and pipelines | Convolutions, aggregators, losses, scorers, enrichers, positional encodings | `hyperbench.nn` |
 | **HLP pipelines** | Use ready-to-run training and evaluation pipelines | HLP modules with encoders, configs, and loss definitions for multiple models | `hyperbench.hlp` |
-| **Typed APIs** | Work with strongly typed graph/data/model objects | Consistent and extensible APIs for datasets and models | `hyperbench.types` |
-
 
 ## Getting started
 
