@@ -52,3 +52,15 @@ Hyperbench has the following required dependencies:
 | Extra | Dependency | Version | Notes |
 | --- | --- | --- | --- |
 | tensorboard | tensorboard | 2.20.0 | See [TensorBoard Integration](../development/development.md#tensorboard-support) |
+
+## Development dependencies
+
+| Dependency | Version | Notes |
+| --- | --- | --- |
+| mkdocstrings[python] | 1.0.4 |  |
+| pre-commit | 4.5.1 |  |
+| pytest | 9.0.3 |  |
+| pytest-cov | 7.1.0 |  |
+| ruff | 0.15.11 |  |
+| ty | 0.0.34 |  |
+| zensical | 0.0.41 |  |
