@@ -171,7 +171,7 @@ like
 Now your code is on GitHub, but it is not yet a part of the hyperbench project. For that to
 happen, a pull request needs to be submitted on GitHub.
 
-Making a pull request
+### Making a pull request
 
 Once you have finished your code changes, your code change will need to follow the
 :ref:`hyperbench contribution guidelines <contributing_codebase>` to be successfully accepted.
@@ -252,3 +252,17 @@ request by pushing to the branch on GitHub:
 
 Any ``git push`` will automatically update your pull request with your branch's changes
 and restart the :ref:`Continuous Integration <contributing.ci>` checks.
+
+### Tips for a successful pull request
+
+If you have made it to the `Making a pull request`_ phase, one of the core contributors may
+take a look. Please note however that a handful of people are responsible for reviewing
+all of the contributions, which can often lead to bottlenecks.
+
+To improve the chances of your pull request being reviewed, you should:
+
+- **Reference an open issue** for non-trivial changes to clarify the PR's purpose
+- **Ensure you have appropriate tests**. These should be the first part of any PR
+- **Keep your pull requests as simple as possible**. Larger PRs take longer to review
+- **Ensure that CI is in a green state**. Reviewers may not even look otherwise (See [CI documentation](../development/ci.md) for more info on CI checks).
+- **Keep** `Updating your pull request`_, either by request or every few days

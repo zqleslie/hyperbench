@@ -9,26 +9,29 @@ You can always run `make help` to see the latest list.
 > - These are the explicit CLI commands that each `make` target runs.
 > - `make all`, `make build`, `make check`, `make docs` are composites (they run multiple steps).
 
-You can always run `make help` to see the latest list.
-
-- `make all` — Clean, setup, lint, typecheck, test
-- `make build` — Clean and setup
-- `make setup` — Install dependencies (via `uv`) and install HyperBench in editable mode
-- `make setup-tensorboard` — Install optional TensorBoard extra
-- `make check` — Run lint + format + typecheck
-- `make lint` — Run the linter (`ruff check`)
-- `make lint-fix` — Run the linter with auto-fix (`ruff check --fix`)
-- `make format` — Run the formatter (`ruff format`)
-- `make typecheck` — Run the type checker (`ty check`)
-- `make test` — Run all tests (`pytest` + coverage)
-- `make stest T=<test_name>` — Run a single test (value passed to `hyperbench/tests/<test_name>`)
-- `make run <file.py>` — Run a single Python file (for example: `make run examples/gcn.py`)
-- `make docs` — Build and serve documentation
-- `make docs-build` — Build documentation without serving
-- `make docs-serve` — Serve built documentation locally (default: `http://127.0.0.1:8000`)
-- `make loc` — Count lines of Python code
-- `make clean` — Remove build/test artifacts
-- `make destroy` — Destroy the environment (removes `.venv`, lockfile, logs)
+| Target | Description |
+|---|---|
+| `make help` | Print available targets |
+| `make all` | Clean, setup, check, test |
+| `make build` | Clean and setup |
+| `make setup` | Install dependencies (via `uv`) and install HyperBench in editable mode |
+| `make setup-tensorboard` | Install optional TensorBoard extra |
+| `make check` | Run lint + format + typecheck |
+| `make lint` | Run the linter (`ruff check`) |
+| `make lint-fix` | Run the linter with auto-fix (`ruff check --fix`) |
+| `make lint-rule R=<RULE>` | Lint a single Ruff rule (`ruff check --select <RULE>`) |
+| `make lint-rule-fix R=<RULE>` | Lint a single Ruff rule with auto-fix |
+| `make format` | Run the formatter (`ruff format`) |
+| `make typecheck` | Run the type checker (`ty check`) |
+| `make test` | Run all tests (with coverage) |
+| `make stest T=<test_path>` | Run a single test file/folder under `hyperbench/tests/` |
+| `make run <file.py>` | Run a single Python file (for example: `make run examples/gcn.py`) |
+| `make docs` | Build and serve documentation |
+| `make docs-build` | Build documentation without serving |
+| `make docs-serve` | Serve built documentation locally (default: `http://127.0.0.1:8000`) |
+| `make loc` | Count lines of Python code |
+| `make clean` | Remove build/test artifacts |
+| `make destroy` | Destroy the environment (removes `.venv`, lockfile, logs) |
 
 
 ### Setup
@@ -66,6 +69,22 @@ You can always run `make help` to see the latest list.
 
 	```bash
 	uv run ruff check --fix
+	```
+
+- `make lint-rule R=<RULE>` — Lint a single Ruff rule
+
+	CLI:
+
+	```bash
+	uv run ruff check --select <RULE>
+	```
+
+- `make lint-rule-fix R=<RULE>` — Lint a single Ruff rule with auto-fix
+
+	CLI:
+
+	```bash
+	uv run ruff check --select <RULE> --fix
 	```
 
 - `make format` — Run the formatter (`ruff format`)

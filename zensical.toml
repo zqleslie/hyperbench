@@ -28,6 +28,7 @@ nav = [
     { "Contributing" = "development/contribution.md" },
     { "Makefile" = "development/makefile.md" },
     { "Policies" = "development/policies.md" },
+    { "CI/CD" = "development/ci.md" },
   ] },
   { "API Reference" = [
     { "Overview" = "api/reference.md" },
@@ -69,7 +70,7 @@ features = [
 media = "(prefers-color-scheme: light)"
 scheme = "default"
 primary = "light-green"
-accent = "indigo"
+accent = "light-green"
 toggle.icon = "lucide/sun"
 toggle.name = "Switch to dark mode"
 
@@ -77,7 +78,7 @@ toggle.name = "Switch to dark mode"
 media = "(prefers-color-scheme: dark)"
 scheme = "slate"
 primary = "light-green"
-accent = "indigo"
+accent = "light-green"
 toggle.icon = "lucide/moon"
 toggle.name = "Switch to light mode"
 [project.markdown_extensions.abbr]

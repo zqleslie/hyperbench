@@ -57,7 +57,7 @@ Hyperbench has the following required dependencies:
 
 | Dependency | Version | Notes |
 | --- | --- | --- |
-| mkdocstrings[python] | 1.0.4 |  |
+| mkdocstrings-python | 1.0.4 |  |
 | pre-commit | 4.5.1 |  |
 | pytest | 9.0.3 |  |
 | pytest-cov | 7.1.0 |  |
