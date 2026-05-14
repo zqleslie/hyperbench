@@ -1,10 +1,10 @@
 <!-- based on https://pandas.pydata.org/docs/development/contributing.html -->
 
-# Contributing to hyperbench
+# Contributing to HyperBench
 
 All contributions, bug reports, bug fixes, documentation improvements,
 enhancements, and ideas are welcome. We ask that contributors follow
-all contribution guidelines when participating with hyperbench.
+all contribution guidelines when participating with HyperBench.
 
 
 ## Starting out
@@ -31,7 +31,7 @@ leave a comment on an issue, so other people know it's available again.
 
 ### Version control, Git, and GitHub
 
-hyperbench is hosted on [GitHub](https://www.github.com/hypernetwork-research-group/hyperbench), and to
+HyperBench is hosted on [GitHub](https://www.github.com/hypernetwork-research-group/hyperbench), and to
 contribute, you will need to sign up for a [free GitHub account](https://github.com/signup/free). We use [Git](https://git-scm.com/) for
 version control to allow many people to work together on the project.
 
@@ -62,10 +62,11 @@ Below are some useful resources for learning more about forking and pull request
 setting up your SSH key, and configuring git.  All these steps need to be completed before
 you can work seamlessly between your local repository and GitHub.
 
-### Create a fork of hyperbench
+### Create a fork of HyperBench
 
-You will need your own copy of hyperbench (aka fork) to work on the code. Go to the `hyperbench project
-page <https://github.com/hypernetwork-research-group/hyperbench>` and hit the ``Fork`` button. Please uncheck the box to copy only the main branch before selecting ``Create Fork``.
+You will need your own copy of HyperBench (aka fork) to work on the code. Go to the
+[HyperBench project page](https://github.com/hypernetwork-research-group/hyperbench) and hit the `Fork`
+button. Please uncheck the box to copy only the main branch before selecting `Create Fork`.
 You will want to clone your fork to your machine
 
 ```bash
@@ -76,13 +77,13 @@ You will want to clone your fork to your machine
 ```
 
 This creates the directory ``hyperbench-yourname`` and connects your repository to
-the upstream (main project) *hyperbench* repository.
+the upstream (main project) *HyperBench* repository.
 
 
 ### Creating a feature branch
 
-Your local ``main`` branch should always reflect the current state of hyperbench repository.
-First ensure it's up-to-date with the main hyperbench repository.
+Your local ``main`` branch should always reflect the current state of HyperBench repository.
+First ensure it's up-to-date with the main HyperBench repository.
 
 ```bash
     git checkout main
@@ -97,7 +98,7 @@ Then, create a feature branch for making your changes. For example
 
 This changes your working branch from ``main`` to the ``shiny-new-feature`` branch.  Keep any
 changes in this branch specific to one bug or feature so it is clear
-what the branch brings to hyperbench. You can have many feature branches
+what the branch brings to HyperBench. You can have many feature branches
 and switch in between them using the ``git checkout`` command.
 
 When you want to update the feature branch with changes in main after
@@ -125,7 +126,7 @@ For files you intended to modify or add, run.
 Running ``git status`` again should display
 
 ```bash
-    On branch shiny-new-feature
+    On branch feat/shiny-new-feature
          modified:   /relative/path/to/file-to-be-added-or-changed.py
 ```
 
@@ -163,13 +164,13 @@ like
     upstream        git://github.com/hypernetwork-research-group/hyperbench.git (fetch)
     upstream        git://github.com/hypernetwork-research-group/hyperbench.git (push)
 ```
-Now your code is on GitHub, but it is not yet a part of the hyperbench project. For that to
+Now your code is on GitHub, but it is not yet a part of the HyperBench project. For that to
 happen, a pull request needs to be submitted on GitHub.
 
 ### Making a pull request
 
 Once you have finished your code changes, your code change will need to follow the
-[hyperbench contribution guidelines](development.md#contributing-to-the-code-base) to be successfully accepted.
+[HyperBench contribution guidelines](development.md#contributing-to-the-code-base) to be successfully accepted.
 
 If everything looks good, you are ready to make a pull request. A pull request is how
 code from your local repository becomes available to the GitHub community to review
@@ -179,7 +180,7 @@ and merged into the project to appear in the next release. To submit a pull requ
 - Click on the ``Compare & pull request`` button
 - You can then click on ``Commits`` and ``Files Changed`` to make sure everything looks
    okay one last time
-- Write a descriptive title that includes prefixes. hyperbench uses a convention for title
+- Write a descriptive title that includes prefixes. HyperBench uses a convention for title
    prefixes. Here are some common ones along with general guidelines for when to use them:
 
     - `feat:` — A new feature or enhancement to an existing feature.
@@ -188,6 +189,7 @@ and merged into the project to appear in the next release. To submit a pull requ
         updating documentation, refactoring without changing functionality).
     - `refactor:` — A code change that neither fixes a bug nor adds a feature but makes the code cleaner or more efficient.
     - `docs:` — Changes to documentation only.
+    You can check the [CONTRIBUTING.md](https://github.com/hypernetwork-research-group/hyperbench/blob/main/CONTRIBUTING.md) file for more details on commit message guidelines and title prefixes.
 
 - Complete the checklist template in the body of the pull request and write an additional description below the checklist if necessary.
 - Click ``Send Pull Request``.
@@ -208,27 +210,29 @@ Based on the review you get on your pull request, you will probably need to make
 some changes to the code. You can follow the [code committing steps](#making-code-changes)
 again to address any feedback and update your pull request.
 
-It is also important that updates in the hyperbench ``main`` branch are reflected in your pull request.
-To update your feature branch with changes in the hyperbench ``main`` branch, run:
+It is also important that updates in the HyperBench ``main`` branch are reflected in your pull request.
+To update your feature branch with changes in the HyperBench ``main`` branch, run:
 
 ```bash
-    git checkout shiny-new-feature
-    git fetch upstream
-    git merge upstream/main
+    git checkout main
+    git pull
+    git checkout feat/shiny-new-feature
+    git rebase main
+
 ```
 
 If there are no conflicts (or they could be fixed automatically), a file with a
 default commit message will open, and you can simply save and quit this file.
 
-If there are merge conflicts, you need to solve those conflicts. See for
-example at https://help.github.com/articles/resolving-a-merge-conflict-using-the-command-line/
-for an explanation on how to do this.
-
-Once the conflicts are resolved, run:
-
 ```bash
-git add -u # to stage any files you've updated;
-git commit # to finish the merge.
+    # If there are no conflicts, you can skip the next step and directly push the rebased branch to GitHub.
+    git push --force-with-lease
+```
+
+If you have conflicts, you will need to resolve those conflicts before pushing. After running the ``git rebase main`` command, Git will attempt to apply your commits on top of the latest commits from the main branch. If there are any conflicts between your commits and the latest commits from the main branch, Git will pause the rebase process and allow you to resolve those conflicts.
+```bash
+    # after solved the conflicts, you can continue the rebase process by running:
+    git rebase --continue
 ```
 
 >> Notes

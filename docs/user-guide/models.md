@@ -31,21 +31,35 @@ Supported models include:
 from torchmetrics import MetricCollection
 from torchmetrics.classification import BinaryAUROC
 
-from hyperbench.hlp import MLPHlpModule
+from hyperbench.hlp import Node2VecGCNHlpModule, Node2VecGCNHlpConfig
 
 metrics = MetricCollection({"auc": BinaryAUROC()})
 
-model = MLPHlpModule(
-    encoder_config={
-        "in_channels": 32,
-        "out_channels": 32,
-        "hidden_channels": 64,
-        "num_layers": 3,
-        "drop_rate": 0.3,
-    },
-    aggregation="mean",
-    metrics=metrics,
-)
+gcn_config: Node2VecGCNHlpConfig = {
+    "out_channels": num_features,
+    "hidden_channels": num_features,
+    "num_layers": 2,
+    "drop_rate": 0.1,
+    "bias": True,
+    "improved": False,
+    "add_self_loops": True,
+    "normalize": True,
+    "cached": False,
+    "graph_reduction_strategy": "clique_expansion",
+}
+
+precomputed_node2vecgcn_module = Node2VecGCNHlpModule(
+        encoder_config={
+            "mode": "precomputed",
+            "num_features": num_features,
+            "node2vec_config": {},
+            "gcn_config": gcn_config,
+        },
+        aggregation="mean",
+        lr=0.001,
+        weight_decay=0.0,
+        metrics=metrics,
+    )
 ```
 
 ## Minimal example: a GCN baseline
