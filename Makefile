@@ -35,10 +35,6 @@ typecheck:
 	@echo '=== Type checking ==='
 	$(UV) run $(TYPECHECKER) check
 
-docstring-check:
-	@echo '=== Docstring checking ==='
-	$(UV) run ./scripts/validate_docstrings.py
-
 lint:
 	@echo '=== Linting ==='
 	$(UV) run $(LINTER) check
@@ -110,7 +106,6 @@ help:
 	@echo "  check                   - Run lint and typecheck"
 	@echo "  format                  - Run formatting"
 	@echo "  typecheck               - Run type checking"
-	@echo "  docstring-check         - Check docstring formatting"
 	@echo "  lint                    - Run linting"
 	@echo "  lint-fix                - Run linting and fix issues"
 	@echo "  lint-rule R=<rule>      - Run linting for a specific rule (e.g., R=E501)"

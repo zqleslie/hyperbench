@@ -23,7 +23,6 @@ You can always run `make help` to see the latest list.
 | `make lint-rule-fix R=<RULE>` | Lint a single Ruff rule with auto-fix |
 | `make format` | Run the formatter (`ruff format`) |
 | `make typecheck` | Run the type checker (`ty check`) |
-| `make docstring-check` | Check docstring formatting |
 | `make test` | Run all tests (with coverage) |
 | `make stest T=<test_path>` | Run a single test file/folder under `hyperbench/tests/` |
 | `make run <file.py>` | Run a single Python file (for example: `make run examples/gcn.py`) |
@@ -102,14 +101,6 @@ You can always run `make help` to see the latest list.
 
 	```bash
 	uv run ty check
-	```
-
-- `make docstring-check`: Check docstring formatting
-
-	CLI:
-
-	```bash
-	uv run python3 ./scripts/check_docstrings.py
 	```
 
 ### Tests

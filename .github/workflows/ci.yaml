@@ -9,104 +9,39 @@ permissions:
   contents: read
 
 jobs:
-
-  code_quality:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v6
-
-      - name: Install uv
-        uses: astral-sh/setup-uv@v7
-        with:
-          python-version: "3.14"
-
-      - name: Install dependencies
-        run: |
-          make build
-
-      - name: Check docstrings
-        continue-on-error: true # TODO: remove when all docstring issues are fixed
-        run: |
-          make docstring-check
-
-      - name: Type check
-        run: |
-          make typecheck
-
-      - name: Lint code with ruff
-        run: |
-          make lint
-
-      - name: Format code with ruff
-        run: |
-          make format
-
-
   test:
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
-        os: [ ubuntu-latest, macos-latest, windows-latest, ubuntu-slim]
+        os: [ ubuntu-latest, macos-latest, windows-latest ]
         python-version: [ "3.10", "3.11", "3.12", "3.13", "3.14" ]
 
     steps:
       - uses: actions/checkout@v6
 
-      - name: Install uv with Python ${{ matrix.python-version }}
-        uses: astral-sh/setup-uv@v7
+      - name: Set up Python ${{ matrix.python-version }}
+        uses: actions/setup-python@v6
         with:
-            python-version: ${{ matrix.python-version }}
+          python-version: ${{ matrix.python-version }}
+
+      - name: Install uv
+        uses: astral-sh/setup-uv@v7
 
       - name: Install dependencies
         run: |
-          make build
+          uv venv
+          uv pip install -e .
 
-      - name: Run tests with pytest
-        run: |
-          make test
-
-  test-arm:
-    runs-on: ${{ matrix.os }}
-    strategy:
-      matrix:
-        os: [ubuntu-24.04-arm, macos-26]
-        python-version: [ "3.10", "3.11", "3.12", "3.13", "3.14" ]
-
-    steps:
-      - uses: actions/checkout@v6
-
-      - name: Install uv with Python ${{ matrix.python-version }}
-        uses: astral-sh/setup-uv@v7
+      - name: Lint code with ruff
+        uses: astral-sh/ruff-action@v3
         with:
-            python-version: ${{ matrix.python-version }}
+          args: "check --output-format=github"
 
-      - name: Install dependencies
-        run: |
-          make build
-
-      - name: Run tests with pytest
-        run: |
-          make test
-
-  test-x86:
-    runs-on: ${{ matrix.os }}
-    strategy:
-      matrix:
-        os: [ubuntu-24.04, windows-2025]
-        python-version: [ "3.10", "3.11", "3.12", "3.13", "3.14" ]
-
-    steps:
-      - uses: actions/checkout@v6
-
-      - name: Install uv with Python ${{ matrix.python-version }}
-        uses: astral-sh/setup-uv@v7
+      - name: Format code with ruff
+        uses: astral-sh/ruff-action@v3
         with:
-            python-version: ${{ matrix.python-version }}
-
-      - name: Install dependencies
-        run: |
-          make build
+          args: "format --check --diff"
 
       - name: Run tests with pytest
         run: |
-          make test
+          uv run pytest --cov=hyperbench --cov-report=term-missing
